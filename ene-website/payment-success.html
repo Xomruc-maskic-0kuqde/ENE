@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="color-scheme" content="dark" />
+  <title>Welcome to your course — ENE</title>
+  <meta name="description" content="You're in. Welcome to ENE.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f48003'/%3E%3Ctext x='50%25' y='54%25' font-family='-apple-system,Inter,sans-serif' font-size='34' font-weight='800' text-anchor='middle' dominant-baseline='middle' fill='%230a0a14'%3EE%3C/text%3E%3C/svg%3E">
+  <script src="assets/config.js?v=1776533472"></script>
+  <script src="assets/sanitize.js?v=1776533472"></script>
+  <script src="assets/api.js?v=1776533472"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg-0: #050514; --bg-1: #08081f;
+      --surface: #0e0e2c; --surface-2: #14143a;
+      --line: rgba(255,255,255,0.07); --line-2: rgba(255,255,255,0.14);
+      --line-3: rgba(255,255,255,0.22);
+      --accent: #f48003; --accent-2: #ff9a2e;
+      --accent-soft: rgba(244,128,3,0.18);
+      --accent-glow: rgba(244,128,3,0.45);
+      --text: #f5f5fa;
+      --text-soft: rgba(245,245,250,0.72);
+      --text-muted: rgba(245,245,250,0.45);
+      --ok: #15c7bc; --ok-soft: rgba(21,199,188,0.22);
+      --error: #ff7a7a;
+      --gold: #f3c659;
+
+      --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+      --ease-pop:      cubic-bezier(0.18, 0.9, 0.3, 1.2);
+      --ease-back:     cubic-bezier(0.34, 1.56, 0.64, 1);
+      --ease-shake:    cubic-bezier(0.36, 0.07, 0.19, 0.97);
+
+      --card-radius: 14px;
+    }
+    html { color-scheme: dark; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg-0);
+      background-image:
+        radial-gradient(900px 520px at 88% -8%, rgba(244,128,3,0.12), transparent 60%),
+        radial-gradient(900px 640px at -10% 110%, rgba(50,80,200,0.16), transparent 60%),
+        radial-gradient(700px 400px at 50% 40%, rgba(21,199,188,0.08), transparent 60%),
+        linear-gradient(180deg, var(--bg-0), var(--bg-1));
+      color: var(--text);
+      min-height: 100vh; min-height: 100dvh;
+      display: flex; align-items: center; justify-content: center;
+      padding: max(24px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      opacity: 0.04; mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    }
+
+    h1 { font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.022em; }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+    .shell {
+      position: relative; z-index: 1;
+      width: 100%;
+      max-width: 560px;
+      display: flex; flex-direction: column;
+      gap: 20px;
+    }
+
+    .card {
+      position: relative;
+      background: linear-gradient(180deg, rgba(14,14,44,0.78), rgba(20,20,58,0.68));
+      backdrop-filter: blur(24px) saturate(140%);
+      -webkit-backdrop-filter: blur(24px) saturate(140%);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: var(--card-radius);
+      padding: 48px 36px 30px;
+      box-shadow:
+        0 30px 90px -30px rgba(0,0,0,0.78),
+        0 2px 6px rgba(0,0,0,0.25),
+        inset 0 1px 0 rgba(255,255,255,0.07),
+        inset 0 -1px 0 rgba(255,255,255,0.02);
+      text-align: center;
+      opacity: 0;
+      transform: translate3d(0, 14px, 0) scale(0.985);
+      animation: cardIn 580ms var(--ease-standard) forwards;
+    }
+    @supports not ((backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px))) {
+      .card { background: linear-gradient(180deg, #0e0e2c, #14143a); }
+    }
+    @keyframes cardIn { to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); } }
+
+    .br-tl, .br-tr, .br-bl, .br-br {
+      content: ""; position: absolute; width: 14px; height: 14px;
+      border: 2px solid var(--accent); pointer-events: none;
+      opacity: 0; animation: bracketIn 420ms 300ms var(--ease-pop) forwards;
+    }
+    .br-tl { top: -1px; left: -1px;  border-right: none; border-bottom: none; border-top-left-radius: var(--card-radius); }
+    .br-tr { top: -1px; right: -1px; border-left: none;  border-bottom: none; border-top-right-radius: var(--card-radius); }
+    .br-bl { bottom: -1px; left: -1px;  border-right: none; border-top: none; border-bottom-left-radius: var(--card-radius); }
+    .br-br { bottom: -1px; right: -1px; border-left: none;  border-top: none; border-bottom-right-radius: var(--card-radius); }
+    @keyframes bracketIn { 0% { opacity:0; transform:scale(.6); } 100% { opacity:1; transform:scale(1); } }
+
+    .logo {
+      width: 118px; display: block; margin: 0 auto 20px;
+      opacity: 0; transform: translate3d(0, 6px, 0);
+      animation: rise 480ms 120ms var(--ease-standard) forwards;
+      filter: drop-shadow(0 14px 32px var(--accent-glow));
+    }
+    @keyframes rise { to { opacity: 1; transform: translate3d(0, 0, 0); } }
+
+    /* Checkmark + halos */
+    .check-wrap {
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 24px;
+      min-height: 106px;
+    }
+    .bg-glow {
+      position: absolute;
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--ok-soft) 0%, transparent 70%);
+      transform: scale(0); opacity: 0;
+      animation: bgPulse 1.2s 80ms var(--ease-standard) forwards;
+      pointer-events: none;
+    }
+    @keyframes bgPulse {
+      0%   { transform: scale(0.5); opacity: 0; }
+      45%  { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+    .halo, .halo-2 {
+      position: absolute;
+      width: 78px; height: 78px; border-radius: 50%;
+      background: rgba(21,199,188,0.22);
+      transform: scale(0.8); opacity: 0;
+    }
+    .halo   { animation: halo 1.2s 200ms var(--ease-standard) forwards; }
+    .halo-2 { animation: halo 1.6s 360ms var(--ease-standard) forwards; background: transparent; border: 1.5px solid var(--ok); }
+    @keyframes halo {
+      0%   { transform: scale(0.8); opacity: 0; }
+      40%  { opacity: 0.8; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+
+    .ring {
+      position: relative;
+      width: 78px; height: 78px; border-radius: 50%;
+      background: rgba(21,199,188,0.14);
+      border: 2px solid var(--ok);
+      display: flex; align-items: center; justify-content: center;
+      transform: scale(0.3); opacity: 0;
+      animation: popIn 500ms 160ms var(--ease-back) forwards;
+      box-shadow:
+        0 0 30px -4px rgba(21,199,188,0.45),
+        inset 0 0 20px -6px rgba(21,199,188,0.45);
+    }
+    @keyframes popIn { 0% { transform: scale(0.3); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+    .ring svg {
+      width: 40px; height: 40px;
+      stroke: var(--ok);
+      fill: none;
+      stroke-width: 3;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+    .ring svg path {
+      stroke-dasharray: 32; stroke-dashoffset: 32;
+      animation: draw 520ms 420ms var(--ease-standard) forwards;
+    }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+
+    /* Processing / failed states */
+    .processing .bg-glow, .processing .halo, .processing .halo-2 { display: none; }
+    .processing .ring {
+      border-color: var(--accent);
+      background: rgba(244,128,3,0.10);
+      box-shadow: 0 0 30px -4px var(--accent-soft);
+      animation: popIn 360ms var(--ease-pop) forwards, pulseRing 1.7s 400ms ease-in-out infinite;
+    }
+    @keyframes pulseRing {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(244,128,3,0.35), 0 0 30px -4px var(--accent-soft); }
+      50%      { box-shadow: 0 0 0 12px rgba(244,128,3,0),  0 0 34px -2px var(--accent-glow); }
+    }
+    .processing .ring svg { stroke: var(--accent); animation: spin 1.2s linear infinite; }
+    .processing .ring svg path { animation: none; stroke-dasharray: none; stroke-dashoffset: 0; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .failed .bg-glow, .failed .halo, .failed .halo-2 { display: none; }
+    .failed .ring {
+      border-color: var(--error);
+      background: rgba(255,122,122,0.12);
+      box-shadow: 0 0 30px -4px rgba(255,122,122,0.4);
+      animation: popIn 420ms var(--ease-pop) forwards, shake 420ms 420ms var(--ease-shake);
+    }
+    .failed .ring svg { stroke: var(--error); }
+    .failed .ring svg path { animation: none; stroke-dasharray: none; stroke-dashoffset: 0; }
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-1px, 0, 0); }
+      20%, 80% { transform: translate3d(2px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+      40%, 60% { transform: translate3d(4px, 0, 0); }
+    }
+
+    .txt {
+      opacity: 0; transform: translate3d(0, 8px, 0);
+      animation: rise 440ms var(--delay, 0ms) var(--ease-standard) forwards;
+    }
+    h1 {
+      font-size: 1.85rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      line-height: 1.14;
+    }
+    .sub {
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem; letter-spacing: .2em; text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .desc {
+      color: var(--text-soft);
+      margin-bottom: 22px;
+      font-size: 0.98rem;
+    }
+
+    .meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      letter-spacing: .08em;
+      margin-bottom: 20px;
+      padding: 11px 14px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    }
+    .meta a { color: var(--accent); text-decoration: none; transition: color 180ms var(--ease-standard); }
+    .meta a:hover { color: var(--accent-2); }
+
+    .actions { display: flex; flex-direction: column; gap: 10px; }
+    a.btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 16px;
+      border-radius: 10px;
+      font-weight: 700; font-size: 0.9rem;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: .16em; text-transform: uppercase;
+      text-decoration: none;
+      transition:
+        transform 180ms var(--ease-standard),
+        box-shadow 220ms var(--ease-standard),
+        background-color 200ms var(--ease-standard),
+        color 180ms var(--ease-standard),
+        border-color 180ms var(--ease-standard);
+      will-change: transform, box-shadow;
+    }
+    a.btn.primary {
+      background: var(--accent);
+      color: #0a0a14;
+      box-shadow: 0 0 0 1px var(--accent), 0 10px 30px -12px var(--accent-soft);
+    }
+    @media (hover: hover) {
+      a.btn.primary:hover {
+        background: var(--accent-2);
+        transform: translate3d(0, -2px, 0);
+        box-shadow:
+          0 0 0 1px var(--accent-2),
+          0 18px 44px -14px rgba(244,128,3,0.55),
+          0 0 0 4px rgba(244,128,3,0.08);
+      }
+    }
+    a.btn.primary:active { transform: translate3d(0, -1px, 0) scale(0.995); transition-duration: 80ms; }
+    a.btn.ghost { color: var(--text-soft); border: 1px solid var(--line-2); }
+    a.btn.ghost:hover { color: var(--accent); border-color: var(--accent); }
+    a.btn:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px #0a0a14, 0 0 0 4px var(--accent);
+    }
+
+    .countdown {
+      margin-top: 14px;
+      height: 2px;
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      border-radius: 2px;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 280ms var(--ease-standard);
+    }
+    .countdown.show { opacity: 1; }
+    .countdown-fill {
+      height: 100%; width: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transform-origin: left center;
+      transform: scaleX(0);
+    }
+    .countdown.run .countdown-fill {
+      animation: drain var(--countdown-ms, 5000ms) linear forwards;
+    }
+    @keyframes drain { 0% { transform: scaleX(1); } 100% { transform: scaleX(0); } }
+    .countdown-label {
+      display: block;
+      margin-top: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      opacity: 0;
+      transition: opacity 280ms var(--ease-standard);
+    }
+    .countdown-label.show { opacity: 1; }
+
+    /* ── Upsell card (below the success card) ──────────────────────
+       Appears after success — students who enrolled also picked these.
+       Slides in slightly later than the success card to feel like a
+       natural "by the way" rather than pressure. */
+    .upsell {
+      opacity: 0;
+      transform: translate3d(0, 14px, 0);
+      animation: rise 560ms 900ms var(--ease-standard) forwards;
+      display: none;
+    }
+    .upsell.show { display: block; }
+    .upsell-head {
+      display: flex; align-items: baseline; justify-content: space-between;
+      padding: 4px 6px 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .upsell-head strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .upsell-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px;
+    }
+    .rec {
+      position: relative;
+      display: block;
+      padding: 12px;
+      border-radius: 10px;
+      background: rgba(14,14,44,0.6);
+      backdrop-filter: blur(12px) saturate(140%);
+      -webkit-backdrop-filter: blur(12px) saturate(140%);
+      border: 1px solid rgba(255,255,255,0.08);
+      text-decoration: none;
+      color: var(--text);
+      transition:
+        transform 220ms var(--ease-standard),
+        border-color 220ms var(--ease-standard),
+        box-shadow 220ms var(--ease-standard);
+      will-change: transform;
+    }
+    @media (hover: hover) {
+      .rec:hover {
+        transform: translate3d(0, -2px, 0);
+        border-color: var(--line-3);
+        box-shadow: 0 18px 44px -18px rgba(244,128,3,0.25);
+      }
+    }
+    .rec .rec-thumb {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 6px;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(244,128,3,0.2), rgba(91,141,239,0.2));
+      margin-bottom: 8px;
+    }
+    .rec .rec-thumb img {
+      width: 100%; height: 100%; object-fit: cover;
+      display: block;
+    }
+    .rec .rec-cat {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+    .rec .rec-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 6px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      min-height: 2.3em;
+    }
+    .rec .rec-price {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 0.95rem;
+    }
+    .rec .rec-price .strike {
+      color: var(--text-muted);
+      text-decoration: line-through;
+      font-weight: 500;
+      font-size: 0.75rem;
+      margin-right: 6px;
+    }
+
+    /* Trust row */
+    .methods {
+      display: flex; gap: 6px; justify-content: center; align-items: center;
+      margin-top: 22px; flex-wrap: wrap;
+    }
+    .method {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      padding: 6px 10px;
+      border-radius: 5px;
+      border: 1px solid var(--line);
+      color: var(--text-soft);
+      background: rgba(255,255,255,0.02);
+      user-select: none;
+    }
+    .trust {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .trust svg { width: 12px; height: 12px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* Confetti */
+    .confetti {
+      position: absolute; inset: 0;
+      pointer-events: none; overflow: visible; z-index: 2;
+    }
+    .piece {
+      position: absolute;
+      top: 58px; left: 50%;
+      width: 7px; height: 12px;
+      border-radius: 1px;
+      background: var(--c, var(--accent));
+      opacity: 0;
+      transform: translate3d(0, 0, 0) rotate(0deg);
+      will-change: transform, opacity;
+      animation: burst 1700ms var(--d, 0ms) cubic-bezier(0.18, 0.7, 0.2, 1) forwards;
+    }
+    @keyframes burst {
+      0%   { opacity: 0; transform: translate3d(0, 0, 0) rotate(0deg); }
+      12%  { opacity: 1; }
+      82%  { opacity: 1; }
+      100% {
+        opacity: 0;
+        transform:
+          translate3d(calc(var(--x, 0) * 1px), calc(var(--y, 280) * 1px), 0)
+          rotate(calc(var(--r, 360) * 1deg));
+      }
+    }
+
+    @media (max-width: 520px) {
+      .card { padding: 40px 22px 26px; border-radius: 12px; }
+      h1 { font-size: 1.5rem; }
+      .rise, .txt { animation-duration: 400ms; }
+      .methods { gap: 5px; }
+      .method { font-size: 0.55rem; padding: 5px 8px; }
+      .upsell-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+      .confetti, .halo, .halo-2, .bg-glow { display: none; }
+      .card, .txt, .logo, .br-tl, .br-tr, .br-bl, .br-br, .upsell { opacity: 1; transform: none; }
+      body::before { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <style>.skip-link{position:absolute;left:-9999px;top:8px;z-index:99999;background:#f48003;color:#0a0a14;padding:10px 18px;border-radius:8px;font-family:system-ui,sans-serif;font-weight:700;font-size:.8rem;text-decoration:none}.skip-link:focus{left:12px}</style>
+  <div class="shell">
+    <main class="card" id="card" tabindex="-1" aria-live="polite" aria-atomic="true">
+      <a id="main-content" tabindex="-1" aria-hidden="true" style="position:absolute"></a>
+      <span class="br-tl" aria-hidden="true"></span>
+      <span class="br-tr" aria-hidden="true"></span>
+      <span class="br-bl" aria-hidden="true"></span>
+      <span class="br-br" aria-hidden="true"></span>
+
+      <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+      <img src="assets/logo.png" alt="ENE" class="logo">
+
+      <div class="check-wrap">
+        <div class="bg-glow" aria-hidden="true"></div>
+        <div class="halo" aria-hidden="true"></div>
+        <div class="halo-2" aria-hidden="true"></div>
+        <div class="ring" role="img" aria-label="Success">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 12l5 5 11-11"/>
+          </svg>
+        </div>
+      </div>
+
+      <h1 class="txt" id="title" style="--delay: 520ms;">Your journey starts now</h1>
+      <p class="sub txt" id="subtitle" style="--delay: 580ms;">Payment successful · You're enrolled</p>
+      <p class="desc txt" id="desc" style="--delay: 640ms;">
+        Welcome to your course. The first lesson is waiting.
+      </p>
+
+      <div class="meta txt" id="meta" style="--delay: 700ms;" hidden>
+        <span>Receipt</span>
+        <a id="receiptLink" href="#" target="_blank" rel="noopener">View on Stripe →</a>
+      </div>
+
+      <div class="actions txt" style="--delay: 760ms;">
+        <a id="primaryAction" href="dashboard.html" class="btn primary">Continue to course →</a>
+        <a id="secondaryAction" href="#" class="btn ghost" hidden>Try again</a>
+      </div>
+
+      <div class="countdown" id="countdown" aria-hidden="true">
+        <div class="countdown-fill"></div>
+      </div>
+      <span class="countdown-label" id="countdownLabel" aria-hidden="true"></span>
+
+      <div class="methods txt" style="--delay: 820ms;" aria-label="Accepted payment methods">
+        <span class="method">Visa</span>
+        <span class="method">Mastercard</span>
+        <span class="method">Apple Pay</span>
+        <span class="method">Google Pay</span>
+      </div>
+      <div class="trust txt" style="--delay: 860ms;">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <span>Secured by Stripe · PCI DSS</span>
+      </div>
+    </main>
+
+    <!-- Cross-sell — rendered only on success, fed by /api/courses/:id/related -->
+    <section class="upsell" id="upsell" aria-label="Related courses" hidden>
+      <div class="upsell-head">
+        <strong>Students who bought this also liked</strong>
+        <a href="dashboard.html" style="color: var(--text-muted); text-decoration: none;">View all →</a>
+      </div>
+      <div class="upsell-grid" id="upsellGrid"></div>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+      api.requireAuth();
+
+      // ── Analytics hook (same interface as payment.html) ───────────
+      const analytics = {
+        track(event, props = {}) {
+          const payload = Object.assign({ event, ts: Date.now() }, props);
+          try {
+            window.dispatchEvent(new CustomEvent('ene:analytics', { detail: payload }));
+            if (typeof window.gtag === 'function') window.gtag('event', event, props);
+            if (Array.isArray(window.dataLayer)) window.dataLayer.push(Object.assign({ event }, props));
+          } catch (_) {}
+        }
+      };
+      window.eneAnalytics = analytics;
+
+      const params         = new URLSearchParams(window.location.search);
+      const piId           = params.get('payment_intent');
+      const redirectStatus = params.get('redirect_status');
+      const courseId       = params.get('courseId');
+
+      const card       = document.getElementById('card');
+      const title      = document.getElementById('title');
+      const subtitle   = document.getElementById('subtitle');
+      const desc       = document.getElementById('desc');
+      const metaRow    = document.getElementById('meta');
+      const receipt    = document.getElementById('receiptLink');
+      const primary    = document.getElementById('primaryAction');
+      const secondary  = document.getElementById('secondaryAction');
+      const confettiEl = document.getElementById('confetti');
+      const countdown  = document.getElementById('countdown');
+      const countdownLabel = document.getElementById('countdownLabel');
+      const upsell     = document.getElementById('upsell');
+      const upsellGrid = document.getElementById('upsellGrid');
+
+      function launchConfetti() {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const COLORS = ['#f48003', '#ff9a2e', '#15c7bc', '#5b8def', '#a78bfa', '#ec4899', '#f5f5fa'];
+        const COUNT = 48;
+        const frag = document.createDocumentFragment();
+        for (let i = 0; i < COUNT; i++) {
+          const s = document.createElement('span');
+          s.className = 'piece';
+          const x = (Math.random() - 0.5) * 560;
+          const y = 200 + Math.random() * 180;
+          const r = (Math.random() - 0.5) * 900;
+          const d = Math.random() * 280;
+          s.style.setProperty('--x', x.toFixed(1));
+          s.style.setProperty('--y', y.toFixed(1));
+          s.style.setProperty('--r', r.toFixed(1));
+          s.style.setProperty('--d', d.toFixed(0) + 'ms');
+          s.style.setProperty('--c', COLORS[i % COLORS.length]);
+          const sc = 0.85 + Math.random() * 0.6;
+          s.style.width  = (7 * sc).toFixed(1) + 'px';
+          s.style.height = (12 * sc).toFixed(1) + 'px';
+          frag.appendChild(s);
+        }
+        confettiEl.appendChild(frag);
+        setTimeout(() => { confettiEl.textContent = ''; }, 2200);
+      }
+
+      let redirectTimer = null;
+      function startCountdown(ms, targetHref, labelPrefix) {
+        if (redirectTimer) return;
+        countdown.style.setProperty('--countdown-ms', ms + 'ms');
+        countdown.classList.add('show', 'run');
+
+        let remaining = Math.ceil(ms / 1000);
+        const render = () => {
+          countdownLabel.textContent = labelPrefix + ' in ' + remaining + 's…';
+          countdownLabel.classList.add('show');
+        };
+        render();
+        const tick = setInterval(() => {
+          remaining -= 1;
+          if (remaining <= 0) { clearInterval(tick); return; }
+          render();
+        }, 1000);
+
+        redirectTimer = setTimeout(() => {
+          clearInterval(tick);
+          window.location.href = targetHref;
+        }, ms);
+
+        const cancel = () => {
+          clearTimeout(redirectTimer);
+          clearInterval(tick);
+          redirectTimer = null;
+          countdown.classList.remove('show', 'run');
+          countdownLabel.classList.remove('show');
+        };
+        primary.addEventListener('click', cancel, { once: true });
+        secondary && secondary.addEventListener('click', cancel, { once: true });
+      }
+
+      /** Safely set text content (escape happens automatically via .textContent). */
+      function setText(node, value) { node.textContent = value == null ? '' : String(value); }
+
+      /**
+       * Render upsell cards. Data comes from /api/courses/:id/related —
+       * we never fabricate titles or prices. Each card links to the
+       * course page; click fires analytics so we can measure cross-sell
+       * conversion later.
+       */
+      function renderUpsell(items) {
+        if (!Array.isArray(items) || items.length === 0) {
+          upsell.hidden = true;
+          return;
+        }
+        const frag = document.createDocumentFragment();
+        for (const c of items.slice(0, 3)) {
+          const a = document.createElement('a');
+          a.className = 'rec';
+          a.href = 'course.html?id=' + encodeURIComponent(c._id);
+          a.setAttribute('data-course-id', c._id);
+
+          const thumb = document.createElement('div');
+          thumb.className = 'rec-thumb';
+          if (c.image) {
+            const img = document.createElement('img');
+            img.src = c.image; img.alt = ''; img.loading = 'lazy';
+            thumb.appendChild(img);
+          }
+          a.appendChild(thumb);
+
+          const cat = document.createElement('span');
+          cat.className = 'rec-cat';
+          setText(cat, c.category || 'Course');
+          a.appendChild(cat);
+
+          const t = document.createElement('div');
+          t.className = 'rec-title';
+          setText(t, c.title || 'Course');
+          a.appendChild(t);
+
+          const price = document.createElement('div');
+          price.className = 'rec-price';
+          const hasDiscount = c.originalPrice && c.price && c.originalPrice > c.price;
+          if (hasDiscount) {
+            const s = document.createElement('span');
+            s.className = 'strike';
+            s.textContent = '$' + Number(c.originalPrice).toFixed(0);
+            price.appendChild(s);
+          }
+          const val = document.createElement('span');
+          val.textContent = Number(c.price) > 0 ? '$' + Number(c.price).toFixed(0) : 'Free';
+          price.appendChild(val);
+          a.appendChild(price);
+
+          a.addEventListener('click', () => {
+            analytics.track('button_clicked', { button: 'upsell', courseId: c._id });
+          });
+          frag.appendChild(a);
+        }
+        upsellGrid.appendChild(frag);
+        upsell.hidden = false;
+        upsell.classList.add('show');
+      }
+
+      async function loadUpsell(forCourseId) {
+        if (!forCourseId) return;
+        try {
+          const { ok, body } = await api.get('/courses/' + encodeURIComponent(forCourseId) + '/related?limit=3');
+          if (ok && body && Array.isArray(body.data)) renderUpsell(body.data);
+        } catch (_) { /* silent — upsell is optional */ }
+      }
+
+      function setSucceeded(payment) {
+        card.classList.remove('processing', 'failed');
+        title.textContent = 'Your journey starts now';
+        subtitle.textContent = "Payment successful · You're enrolled";
+        const courseTitle = payment.course && payment.course.title
+          ? payment.course.title
+          : 'your course';
+        desc.textContent = 'Welcome to ' + courseTitle + '. The first lesson is waiting.';
+
+        if (payment.receiptUrl) {
+          metaRow.hidden = false;
+          receipt.href = payment.receiptUrl;
+        }
+        if (courseId) {
+          primary.href = 'course.html?id=' + encodeURIComponent(courseId);
+          primary.textContent = 'Continue to course →';
+        }
+        primary.focus({ preventScroll: true });
+
+        primary.addEventListener('click', () => {
+          analytics.track('button_clicked', { button: 'continue_to_course', courseId });
+        }, { once: true });
+
+        launchConfetti();
+
+        analytics.track('payment_completed', {
+          courseId,
+          paymentIntentId: piId,
+          status: payment.status,
+        });
+
+        if (courseId) {
+          startCountdown(5000, 'course.html?id=' + encodeURIComponent(courseId), 'Taking you in');
+          // Prefer the server-computed personalized recommendations
+          // (upsellEngine — same-category, companion, popular fill).
+          // Falls back to /courses/:id/related if the server didn't
+          // attach any. Either way we wait 600ms so the cinematic
+          // success moment lands before the cross-sell arrives.
+          if (Array.isArray(payment.recommendations) && payment.recommendations.length) {
+            setTimeout(() => renderUpsell(payment.recommendations), 600);
+          } else {
+            setTimeout(() => loadUpsell(courseId), 600);
+          }
+        }
+      }
+
+      function setProcessing() {
+        card.classList.add('processing');
+        card.classList.remove('failed');
+        title.textContent = 'Finalizing payment…';
+        subtitle.textContent = 'Almost there';
+        desc.textContent = 'Your payment is being processed. This usually takes a few seconds.';
+      }
+
+      function setFailed(message) {
+        card.classList.remove('processing');
+        card.classList.add('failed');
+        title.textContent = 'Payment not completed';
+        subtitle.textContent = 'Something went wrong';
+        desc.textContent = message || "Your card wasn't charged. You can try again or pick a different payment method.";
+        secondary.hidden = false;
+        if (courseId) {
+          secondary.href = 'payment.html?courseId=' + encodeURIComponent(courseId);
+          secondary.textContent = 'Try again';
+          secondary.focus({ preventScroll: true });
+        }
+        analytics.track('payment_failed', { courseId, reason: message || 'unknown' });
+      }
+
+      // Dispatch on initial state
+      if (redirectStatus === 'failed' || redirectStatus === 'requires_payment_method') {
+        setFailed();
+        return;
+      }
+      if (!piId) {
+        setFailed('Missing payment reference.');
+        return;
+      }
+
+      setProcessing();
+      let tries = 0;
+      const MAX_TRIES = 20;
+      const poll = setInterval(async () => {
+        tries++;
+        const { ok, body } = await api.get('/payments/' + encodeURIComponent(piId));
+        if (!ok) {
+          if (tries >= MAX_TRIES) {
+            clearInterval(poll);
+            setFailed("We couldn't confirm your payment yet. Check your dashboard in a minute.");
+          }
+          return;
+        }
+        const p = (body && body.data) || {};
+        if (p.status === 'succeeded' && p.enrolled) {
+          clearInterval(poll);
+          setSucceeded(p);
+        } else if (p.status === 'failed' || p.status === 'canceled') {
+          clearInterval(poll);
+          setFailed(p.lastError || 'Payment was not completed.');
+        } else if (tries >= MAX_TRIES) {
+          clearInterval(poll);
+          title.textContent = 'Payment received';
+          subtitle.textContent = 'Finalizing enrollment';
+          desc.textContent = "Your payment went through. Enrollment is taking a little longer than usual — it'll appear in your dashboard shortly.";
+          card.classList.remove('processing');
+        }
+      }, 750);
+    })();
+  </script>
+</body>
+</html>

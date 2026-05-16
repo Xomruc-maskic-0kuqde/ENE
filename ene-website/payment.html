@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="color-scheme" content="dark" />
+  <title>Checkout — ENE</title>
+  <meta name="description" content="Complete your ENE subscription. Secured by Stripe.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f48003'/%3E%3Ctext x='50%25' y='54%25' font-family='-apple-system,Inter,sans-serif' font-size='34' font-weight='800' text-anchor='middle' dominant-baseline='middle' fill='%230a0a14'%3EE%3C/text%3E%3C/svg%3E">
+
+  <!-- A/B config hook. Any caller can set `window.ENE_PAYMENT_CONFIG`
+       BEFORE this page's own script runs to swap copy / layout knobs
+       without a rebuild. Defaults are preserved below if unset. -->
+  <script src="assets/config.js?v=1776533472"></script>
+  <script src="assets/sanitize.js?v=1776533472"></script>
+  <script src="assets/api.js?v=1776533472"></script>
+
+  <link rel="preconnect" href="https://js.stripe.com" crossorigin>
+  <link rel="preconnect" href="https://api.stripe.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    @property --angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+
+    :root {
+      --bg-0: #050514; --bg-1: #08081f;
+      --surface: #0e0e2c; --surface-2: #14143a;
+      --line: rgba(255,255,255,0.07);
+      --line-2: rgba(255,255,255,0.14);
+      --line-3: rgba(255,255,255,0.22);
+      --accent: #f48003; --accent-2: #ff9a2e;
+      --accent-soft: rgba(244,128,3,0.18);
+      --accent-glow: rgba(244,128,3,0.45);
+      --text: #f5f5fa;
+      --text-soft: rgba(245,245,250,0.72);
+      --text-muted: rgba(245,245,250,0.45);
+      --error: #ff7a7a;
+      --ok: #15c7bc;
+      --ok-soft: rgba(21,199,188,0.18);
+      --gold: #f3c659;
+
+      --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+      --ease-pop:      cubic-bezier(0.18, 0.9, 0.3, 1.2);
+      --ease-back:     cubic-bezier(0.34, 1.56, 0.64, 1);
+      --ease-shake:    cubic-bezier(0.36, 0.07, 0.19, 0.97);
+
+      --card-radius: 14px;
+    }
+
+    html { color-scheme: dark; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-0);
+      background-image:
+        radial-gradient(900px 520px at 88% -8%, rgba(244,128,3,0.14), transparent 60%),
+        radial-gradient(900px 640px at -10% 110%, rgba(50,80,200,0.16), transparent 60%),
+        radial-gradient(700px 400px at 50% 50%, rgba(21,199,188,0.05), transparent 60%),
+        linear-gradient(180deg, var(--bg-0), var(--bg-1));
+      color: var(--text);
+      min-height: 100vh; min-height: 100dvh;
+      display: flex; align-items: center; justify-content: center;
+      padding: max(24px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      position: relative;
+    }
+    body::before {
+      content: ""; position: fixed; inset: 0;
+      pointer-events: none; z-index: 0;
+      opacity: 0.04; mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    }
+
+    h1, .display { font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.022em; }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+    /* ── Stagger primitive ────────────────────────────────────────────*/
+    .rise {
+      opacity: 0;
+      transform: translate3d(0, 10px, 0);
+      animation: rise 520ms var(--delay, 0ms) var(--ease-standard) forwards;
+      will-change: transform, opacity;
+    }
+    @keyframes rise { to { opacity: 1; transform: translate3d(0, 0, 0); } }
+
+    /* ── Page wrapper + progress strip (above card) ──────────────────*/
+    .shell {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 560px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .progress {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: rgba(14, 14, 44, 0.6);
+      backdrop-filter: blur(12px) saturate(140%);
+      -webkit-backdrop-filter: blur(12px) saturate(140%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      opacity: 0;
+      transform: translate3d(0, 10px, 0);
+      animation: rise 520ms 60ms var(--ease-standard) forwards;
+    }
+    .progress .track {
+      flex: 1;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+    .progress .fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      width: 0%;
+      border-radius: 2px;
+      animation: progressTo 820ms 220ms var(--ease-standard) forwards;
+    }
+    @keyframes progressTo { to { width: 100%; } }
+    .progress .step-num { color: var(--accent); }
+
+    /* ── Card (glassmorphism) ─────────────────────────────────────────*/
+    .card {
+      position: relative;
+      width: 100%;
+      background: linear-gradient(180deg, rgba(14,14,44,0.78), rgba(20,20,58,0.68));
+      backdrop-filter: blur(24px) saturate(140%);
+      -webkit-backdrop-filter: blur(24px) saturate(140%);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: var(--card-radius);
+      padding: 44px 36px 28px;
+      box-shadow:
+        0 30px 90px -30px rgba(0,0,0,0.78),
+        0 2px 6px rgba(0,0,0,0.25),
+        inset 0 1px 0 rgba(255,255,255,0.07),
+        inset 0 -1px 0 rgba(255,255,255,0.02);
+      opacity: 0;
+      transform: translate3d(0, 14px, 0) scale(0.985);
+      animation: cardIn 640ms var(--ease-standard) forwards;
+      will-change: transform, opacity;
+    }
+    @supports not ((backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px))) {
+      .card, .progress { background: linear-gradient(180deg, #0e0e2c, #14143a); }
+    }
+    @keyframes cardIn { to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); } }
+    .card.settled { will-change: auto; }
+
+    .br-tl, .br-tr, .br-bl, .br-br {
+      content: ""; position: absolute;
+      width: 14px; height: 14px;
+      border: 2px solid var(--accent);
+      pointer-events: none;
+      opacity: 0;
+      animation: bracketIn 420ms 360ms var(--ease-pop) forwards;
+    }
+    .br-tl { top: -1px; left: -1px;  border-right: none; border-bottom: none; border-top-left-radius: var(--card-radius); }
+    .br-tr { top: -1px; right: -1px; border-left: none;  border-bottom: none; border-top-right-radius: var(--card-radius); }
+    .br-bl { bottom: -1px; left: -1px;  border-right: none; border-top: none; border-bottom-left-radius: var(--card-radius); }
+    .br-br { bottom: -1px; right: -1px; border-left: none;  border-top: none; border-bottom-right-radius: var(--card-radius); }
+    @keyframes bracketIn { 0% { opacity:0; transform:scale(.6); } 100% { opacity:1; transform:scale(1); } }
+
+    .session-pulse {
+      position: absolute; top: 16px; right: 16px;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--ok);
+      box-shadow: 0 0 10px var(--ok);
+      z-index: 2;
+      opacity: 0;
+      animation: rise 520ms 280ms var(--ease-standard) forwards;
+    }
+    .session-pulse::after {
+      content: ""; position: absolute; inset: -6px;
+      border-radius: 50%;
+      border: 1.5px solid var(--ok);
+      opacity: 0;
+      animation: ping 2.6s 800ms ease-out infinite;
+    }
+    @keyframes ping {
+      0% { transform: scale(0.55); opacity: 0.75; }
+      80% { opacity: 0; }
+      100% { transform: scale(2.4); opacity: 0; }
+    }
+
+    .strip {
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 22px;
+      padding-bottom: 14px;
+      border-bottom: 1px dashed var(--line-2);
+    }
+    .strip .dot-accent {
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-right: 8px;
+      box-shadow: 0 0 12px var(--accent);
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+    .logo {
+      width: 124px;
+      display: block;
+      margin: 0 auto 14px;
+      filter: drop-shadow(0 14px 32px var(--accent-glow));
+    }
+
+    .welcome {
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      min-height: 0.9rem;
+    }
+    .welcome .accent { color: var(--accent); }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 4px;
+      line-height: 1.15;
+    }
+    .sub {
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 22px;
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ── Urgency banner ─────────────────────────────────────────────
+       Session-scoped 15-minute "complete checkout" window. Honest
+       framing: nothing changes if it expires, it's just a nudge to
+       wrap up. When no discount exists we skip it entirely. */
+    .urgency {
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px;
+      padding: 10px 14px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, rgba(244,128,3,0.08), rgba(244,128,3,0.02));
+      border: 1px solid rgba(244,128,3,0.28);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent-2);
+    }
+    .urgency .timer {
+      color: var(--accent);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      min-width: 52px;
+      text-align: left;
+    }
+    .urgency.expired { opacity: 0.5; }
+    .urgency svg {
+      width: 14px; height: 14px;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* ── Value block ──────────────────────────────────────────────────
+       "What you get" + social proof. Sits between the headline and
+       the order summary — the point of maximum intention-to-pay. */
+    .value {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 18px;
+    }
+    .value .v-head {
+      display: grid;
+      grid-template-columns: 144px 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+      position: relative;
+    }
+    .value .thumb {
+      width: 144px;
+      aspect-ratio: 16 / 10;
+      border-radius: 10px;
+      flex: 0 0 auto;
+      background:
+        radial-gradient(120% 100% at 0% 0%, rgba(244,128,3,0.22), transparent 55%),
+        linear-gradient(135deg, rgba(91,141,239,0.18), rgba(244,128,3,0.1));
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      border: 1px solid var(--line-2);
+      position: relative;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(255,255,255,0.03);
+    }
+    .value .thumb::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 55%, rgba(5,5,20,0.55) 100%);
+      pointer-events: none;
+    }
+    .value .thumb img {
+      width: 100%; height: 100%; object-fit: cover;
+      display: block;
+    }
+    .value .v-title {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .value .v-cat {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--accent-2);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .value .v-cat::before {
+      content: "";
+      width: 10px; height: 1px;
+      background: var(--accent-2);
+      display: inline-block;
+      opacity: 0.8;
+    }
+    .value .v-title strong {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 1.15rem;
+      line-height: 1.25;
+      color: var(--text);
+      letter-spacing: -0.005em;
+    }
+    .value .v-desc {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      color: var(--text-soft);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+    .value .v-title small {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+    .value .v-title small::before {
+      content: "";
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: inline-block;
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+    .value .v-head .badge-popular {
+      position: absolute;
+      top: 0; right: 0;
+    }
+    @media (max-width: 520px) {
+      .value .v-head {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .value .thumb {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+      }
+      .value .v-head .badge-popular {
+        position: static;
+        align-self: flex-start;
+      }
+    }
+    .badge-popular {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background: rgba(243, 198, 89, 0.12);
+      color: var(--gold);
+      border: 1px solid rgba(243, 198, 89, 0.3);
+      animation: badgePulse 2.6s ease-in-out infinite;
+    }
+    @keyframes badgePulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(243, 198, 89, 0.0); }
+      50%      { box-shadow: 0 0 18px 0 rgba(243, 198, 89, 0.2); }
+    }
+    .badge-popular::before {
+      content: "★"; font-size: 0.8rem; line-height: 1;
+    }
+
+    /* Benefits checklist */
+    .benefits {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 14px;
+      margin: 0;
+      padding: 0;
+    }
+    .benefits li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--text-soft);
+      line-height: 1.35;
+    }
+    .benefits .tick {
+      width: 16px; height: 16px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: var(--ok-soft);
+      color: var(--ok);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .benefits .tick svg {
+      width: 10px; height: 10px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Social proof strip inside value block */
+    .social {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--line);
+      font-size: 0.76rem;
+      color: var(--text-soft);
+      flex-wrap: wrap;
+    }
+    .social .rating { display: inline-flex; align-items: center; gap: 6px; }
+    .social .stars {
+      position: relative;
+      display: inline-block;
+      font-size: 0.9rem;
+      line-height: 1;
+      letter-spacing: 1px;
+      color: rgba(255, 255, 255, 0.15);
+    }
+    .social .stars::before {
+      content: "★★★★★";
+      color: var(--gold);
+      position: absolute;
+      top: 0; left: 0;
+      overflow: hidden;
+      width: var(--pct, 96%);
+      white-space: nowrap;
+    }
+    .social .stars span { visibility: hidden; }
+    .social .rating-val { font-weight: 600; color: var(--text); }
+    .social .dot-sep {
+      width: 3px; height: 3px; border-radius: 50%;
+      background: var(--text-dim, rgba(245,245,250,0.28));
+    }
+    .social .count {
+      font-variant-numeric: tabular-nums;
+      color: var(--text-soft);
+    }
+
+    /* ── Summary (price breakdown) ──────────────────────────────────*/
+    .summary {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 22px;
+      transition:
+        transform 220ms var(--ease-standard),
+        border-color 220ms var(--ease-standard),
+        box-shadow 220ms var(--ease-standard);
+    }
+    @media (hover: hover) {
+      .summary:hover {
+        transform: translate3d(0, -1px, 0);
+        border-color: var(--line-2);
+        box-shadow:
+          0 14px 42px -22px rgba(244,128,3,0.24),
+          inset 0 1px 0 rgba(255,255,255,0.06);
+      }
+    }
+    .summary .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+    }
+    .summary .row + .row {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--line);
+    }
+    .summary .label {
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .summary .value-col {
+      text-align: right;
+      max-width: 62%;
+    }
+    .summary .value-row {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+    .summary .strike {
+      color: var(--text-muted);
+      text-decoration: line-through;
+      font-size: 0.95rem;
+    }
+    .summary .save {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      border-radius: 4px;
+      color: var(--ok);
+      background: var(--ok-soft);
+      border: 1px solid rgba(21,199,188,0.28);
+      animation: savePulse 2.4s ease-in-out infinite;
+    }
+    @keyframes savePulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(21,199,188,0); }
+      50%      { box-shadow: 0 0 14px 0 rgba(21,199,188,0.24); }
+    }
+    .summary .total {
+      color: var(--accent);
+      font-size: 1.35rem;
+      font-weight: 700;
+      font-family: 'Space Grotesk', sans-serif;
+      letter-spacing: -0.012em;
+    }
+    .summary .title { font-weight: 600; }
+
+    /* Skeleton shimmer */
+    .skel {
+      display: inline-block;
+      height: 1em;
+      min-width: 80px;
+      border-radius: 4px;
+      background: linear-gradient(90deg,
+        rgba(255,255,255,0.04) 0%,
+        rgba(255,255,255,0.12) 50%,
+        rgba(255,255,255,0.04) 100%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s linear infinite;
+      color: transparent !important;
+      user-select: none;
+    }
+    .skel.wide { min-width: 170px; }
+    .skel.price { height: 1.3em; min-width: 100px; }
+    @keyframes shimmer {
+      0% { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+
+    /* ── Payment element shell ────────────────────────────────────*/
+    .pay-wrap {
+      position: relative;
+      min-height: 260px;
+      margin-bottom: 14px;
+    }
+    .element-shell {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; gap: 10px;
+      transition: opacity 280ms var(--ease-standard);
+      pointer-events: none;
+    }
+    .element-shell.hidden { opacity: 0; }
+    .securing {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: 2px;
+    }
+    .securing .ind {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+    .element-shell .bar {
+      height: 48px; border-radius: 6px;
+      background: linear-gradient(90deg,
+        rgba(255,255,255,0.03) 0%,
+        rgba(255,255,255,0.08) 50%,
+        rgba(255,255,255,0.03) 100%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s linear infinite;
+    }
+    .element-shell .bar.tall  { height: 64px; }
+    .element-shell .bar.short { height: 44px; }
+
+    #payment-element {
+      opacity: 0;
+      transform: translate3d(0, 6px, 0) scale(0.98);
+      transition: opacity 420ms var(--ease-standard), transform 420ms var(--ease-standard);
+      position: relative;
+      border-radius: 8px;
+    }
+    #payment-element.mounted { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+    #payment-element::before {
+      content: "";
+      position: absolute; inset: -2px;
+      border-radius: 10px;
+      padding: 2px;
+      background: conic-gradient(from var(--angle, 0deg),
+        var(--accent), var(--accent-2), var(--ok), var(--accent-2), var(--accent));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+              mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 220ms var(--ease-standard);
+      pointer-events: none;
+    }
+    #payment-element.focused::before {
+      opacity: 1;
+      animation: spinAngle 4s linear infinite;
+    }
+    @keyframes spinAngle { to { --angle: 360deg; } }
+    @supports not (background: conic-gradient(from 0deg, red, blue)) {
+      #payment-element::before { display: none; }
+      #payment-element.focused {
+        box-shadow: 0 0 0 1px var(--accent), 0 0 22px -6px var(--accent-glow);
+      }
+    }
+
+    /* ── Pay button (3-state morph) ────────────────────────────────*/
+    .pay-btn {
+      position: relative;
+      display: block;
+      width: 100%;
+      height: 58px;
+      border: none;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #0a0a14;
+      font-weight: 700;
+      font-size: 0.9rem;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      cursor: pointer;
+      overflow: hidden;
+      margin-top: 4px;
+      transition:
+        background-color 260ms var(--ease-standard),
+        transform 180ms var(--ease-standard),
+        box-shadow 260ms var(--ease-standard),
+        filter 200ms var(--ease-standard);
+      box-shadow: 0 0 0 1px var(--accent), 0 10px 30px -12px var(--accent-soft);
+      will-change: transform, box-shadow;
+    }
+    @media (hover: hover) {
+      .pay-btn:hover:not(:disabled):not(.loading):not(.success) {
+        background: var(--accent-2);
+        transform: translate3d(0, -2px, 0);
+        box-shadow:
+          0 0 0 1px var(--accent-2),
+          0 18px 44px -14px rgba(244,128,3,0.58),
+          0 0 0 4px rgba(244,128,3,0.08);
+      }
+    }
+    .pay-btn:active:not(:disabled):not(.loading):not(.success) {
+      transform: translate3d(0, -1px, 0) scale(0.995);
+      transition-duration: 80ms;
+    }
+    .pay-btn:focus-visible {
+      outline: none;
+      box-shadow:
+        0 0 0 2px #0a0a14,
+        0 0 0 4px var(--accent),
+        0 18px 44px -14px rgba(244,128,3,0.55);
+    }
+    .pay-btn:disabled { cursor: not-allowed; filter: saturate(0.75) brightness(0.92); }
+    .pay-btn .state {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      opacity: 0;
+      transform: translate3d(0, 10px, 0);
+      transition: opacity 240ms var(--ease-standard), transform 260ms var(--ease-standard);
+    }
+    .pay-btn .state.is-active { opacity: 1; transform: translate3d(0, 0, 0); }
+    .pay-btn .state-loading.is-active .spinner {
+      animation: spinnerIn 320ms var(--ease-back) both, spin 720ms linear infinite 320ms;
+    }
+    @keyframes spinnerIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .pay-btn .lock {
+      width: 14px; height: 14px;
+      stroke: currentColor; stroke-width: 2.4;
+      fill: none; stroke-linecap: round; stroke-linejoin: round;
+      opacity: 0.85;
+    }
+    .pay-btn .spinner {
+      width: 20px; height: 20px;
+      border: 2.4px solid rgba(10,10,20,0.22);
+      border-top-color: #0a0a14;
+      border-radius: 50%;
+    }
+    .pay-btn .check {
+      width: 22px; height: 22px;
+      stroke: #0a0a14; stroke-width: 3;
+      fill: none; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .pay-btn .check path { stroke-dasharray: 32; stroke-dashoffset: 32; }
+    .pay-btn.success .check path { animation: drawCheck 420ms 60ms var(--ease-standard) forwards; }
+    @keyframes drawCheck { to { stroke-dashoffset: 0; } }
+
+    .pay-btn.loading { animation: btnPulse 1.9s ease-in-out infinite; }
+    @keyframes btnPulse {
+      0%, 100% { box-shadow: 0 0 0 1px var(--accent), 0 10px 30px -12px var(--accent-soft); }
+      50%      { box-shadow: 0 0 0 1px var(--accent-2), 0 18px 40px -10px var(--accent-glow), 0 0 0 5px rgba(244,128,3,0.06); }
+    }
+    .pay-btn.success {
+      background: var(--ok);
+      box-shadow: 0 0 0 1px var(--ok), 0 18px 44px -14px rgba(21,199,188,0.55), 0 0 0 4px rgba(21,199,188,0.1);
+      animation: none;
+    }
+
+    .btn-subtext {
+      text-align: center;
+      margin-top: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ── Error msg ─────────────────────────────────────────────────*/
+    .msg {
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      display: none;
+      line-height: 1.5;
+      font-family: 'JetBrains Mono', monospace;
+      border-left: 3px solid transparent;
+      opacity: 0;
+      transform: translate3d(0, -4px, 0);
+      transition: opacity 220ms var(--ease-standard), transform 220ms var(--ease-standard);
+    }
+    .msg.show { display: block; opacity: 1; transform: translate3d(0, 0, 0); }
+    .msg.error {
+      background: rgba(255,90,90,0.08);
+      border-left-color: var(--error);
+      color: var(--error);
+    }
+    .msg.shake { animation: shake 400ms var(--ease-shake); }
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-1px, 0, 0); }
+      20%, 80% { transform: translate3d(2px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-5px, 0, 0); }
+      40%, 60% { transform: translate3d(5px, 0, 0); }
+    }
+
+    /* ── Risk-reversal strip ──────────────────────────────────────*/
+    .guarantee {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 18px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: rgba(21, 199, 188, 0.05);
+      border: 1px solid rgba(21, 199, 188, 0.18);
+      font-size: 0.82rem;
+      color: var(--text-soft);
+      transition:
+        transform 220ms var(--ease-standard),
+        border-color 220ms var(--ease-standard),
+        background-color 220ms var(--ease-standard);
+      cursor: default;
+    }
+    @media (hover: hover) {
+      .guarantee:hover {
+        transform: translate3d(0, -1px, 0);
+        border-color: rgba(21, 199, 188, 0.35);
+        background-color: rgba(21, 199, 188, 0.08);
+      }
+      .guarantee:hover .shield { animation: shieldTilt 600ms var(--ease-standard); }
+    }
+    .guarantee .shield {
+      width: 18px; height: 18px;
+      stroke: var(--ok);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex: 0 0 auto;
+    }
+    @keyframes shieldTilt {
+      0%, 100% { transform: rotate(0deg); }
+      25%      { transform: rotate(-6deg) scale(1.04); }
+      75%      { transform: rotate(6deg) scale(1.04); }
+    }
+
+    /* ── Real-time trust signal ───────────────────────────────────*/
+    .realtime {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      opacity: 0;
+      transition: opacity 360ms var(--ease-standard);
+    }
+    .realtime.show { opacity: 1; }
+    .realtime .live-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--ok);
+      box-shadow: 0 0 8px var(--ok);
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+
+    /* ── Methods + Trust footer ──────────────────────────────────*/
+    .methods {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      align-items: center;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .method {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      padding: 6px 10px;
+      border-radius: 5px;
+      border: 1px solid var(--line);
+      color: var(--text-soft);
+      background: rgba(255,255,255,0.02);
+      transition:
+        border-color 220ms var(--ease-standard),
+        color 220ms var(--ease-standard),
+        transform 180ms var(--ease-standard);
+      user-select: none;
+    }
+    @media (hover: hover) {
+      .method:hover {
+        border-color: var(--line-3);
+        color: var(--text);
+        transform: translate3d(0, -1px, 0);
+      }
+    }
+
+    .encryption {
+      text-align: center;
+      margin-top: 12px;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .trust {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .trust svg {
+      width: 12px; height: 12px;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+    .back {
+      display: block; text-align: center; margin-top: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 180ms var(--ease-standard);
+    }
+    .back:hover, .back:focus-visible { color: var(--accent); outline: none; }
+
+    /* ── Mobile ───────────────────────────────────────────────────*/
+    @media (max-width: 520px) {
+      .card { padding: 36px 20px 24px; border-radius: 12px; }
+      h1 { font-size: 1.45rem; }
+      .summary .total { font-size: 1.2rem; }
+      .pay-btn { height: 60px; font-size: 0.82rem; letter-spacing: 0.14em; }
+      .benefits { grid-template-columns: 1fr; }
+      .methods { gap: 5px; }
+      .method { font-size: 0.55rem; padding: 5px 8px; }
+      .rise, .card { animation-duration: 440ms; }
+      /* Compress the realtime line on very small screens */
+      .realtime { font-size: 0.6rem; letter-spacing: 0.12em; }
+    }
+
+    /* ── Reduced motion ──────────────────────────────────────────*/
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+      .card, .rise, .logo, .progress { opacity: 1; transform: none; }
+      .br-tl, .br-tr, .br-bl, .br-br, .session-pulse { opacity: 1; }
+      body::before { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <style>.skip-link{position:absolute;left:-9999px;top:8px;z-index:99999;background:#f48003;color:#0a0a14;padding:10px 18px;border-radius:8px;font-family:system-ui,sans-serif;font-weight:700;font-size:.8rem;text-decoration:none}.skip-link:focus{left:12px}</style>
+  <div class="shell">
+    <!-- Step-progress indicator. Always reads "Step 2 of 2" at checkout —
+         the user came from Enroll-click; they're near the finish line. -->
+    <div class="progress" role="progressbar" aria-valuenow="2" aria-valuemin="1" aria-valuemax="2" aria-label="Checkout progress">
+      <span><span class="step-num">Step 2 of 2</span> · Payment</span>
+      <span class="track"><span class="fill"></span></span>
+    </div>
+
+    <main class="card" id="main-content" tabindex="-1" aria-labelledby="checkoutTitle">
+      <span class="session-pulse" aria-hidden="true" title="Secure session active"></span>
+      <span class="br-tl" aria-hidden="true"></span>
+      <span class="br-tr" aria-hidden="true"></span>
+      <span class="br-bl" aria-hidden="true"></span>
+      <span class="br-br" aria-hidden="true"></span>
+
+      <div class="strip rise" style="--delay: 80ms;">
+        <span><span class="dot-accent"></span>ENE / Checkout</span>
+        <span>Secure session</span>
+      </div>
+
+      <img src="assets/logo.png" alt="ENE" class="logo rise" style="--delay: 120ms;">
+
+      <!-- Personalization — filled from /users/me on load. Empty space
+           reserved via min-height so flipping from '' to 'Welcome back, X'
+           doesn't cause layout shift. -->
+      <p class="welcome rise" id="welcome" style="--delay: 160ms;" aria-live="polite"></p>
+      <h1 id="checkoutTitle" class="rise" style="--delay: 200ms;" data-ab="headline">
+        Start learning instantly
+      </h1>
+      <p class="sub rise" style="--delay: 240ms;">Secure payment · Instant access</p>
+
+      <div id="msg" class="msg" role="alert" aria-live="assertive"></div>
+
+      <!-- Urgency: session-scoped 15-min window. Nothing bad happens on
+           expiry — it's a gentle "complete checkout" reminder. Only
+           rendered when the course has an actual discount to preserve
+           honest framing. -->
+      <div class="urgency rise" id="urgency" style="--delay: 270ms;" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 7v5l3 2"/>
+        </svg>
+        <span>Limited offer ·</span>
+        <span class="timer" id="urgencyTimer">15:00</span>
+      </div>
+
+      <!-- Value block: course identity + benefits + social proof. -->
+      <section class="value rise" style="--delay: 300ms;" aria-label="What you get">
+        <div class="v-head">
+          <div class="thumb" id="valueThumb" aria-hidden="true"></div>
+          <div class="v-title">
+            <span class="v-cat" id="valueCategory" hidden></span>
+            <strong id="valueTitle"><span class="skel wide"></span></strong>
+            <p class="v-desc" id="valueDesc" hidden></p>
+            <small id="valueInstructor"><span class="skel"></span></small>
+          </div>
+          <span class="badge-popular" id="badgePopular" hidden>Most popular</span>
+        </div>
+        <ul class="benefits" id="benefits">
+          <!-- Populated from AB.benefits on boot. Graceful render means
+               even if JS fails, the structure is still here (empty). -->
+        </ul>
+        <div class="social">
+          <span class="rating" id="ratingWrap" hidden>
+            <span class="stars" id="starsEl" style="--pct: 96%;"><span>★★★★★</span></span>
+            <span class="rating-val" id="ratingVal">4.8</span>
+            <span class="count" id="ratingCount">(—)</span>
+          </span>
+          <span class="dot-sep" id="socialSep" hidden></span>
+          <span class="count" id="studentCount" hidden>—</span>
+        </div>
+      </section>
+
+      <section class="summary rise" style="--delay: 340ms;" aria-label="Order summary">
+        <div class="row">
+          <span class="label">Course</span>
+          <span class="value-col title" id="sumTitle"><span class="skel wide"></span></span>
+        </div>
+        <div class="row">
+          <span class="label">Email</span>
+          <span class="value-col" id="sumEmail"><span class="skel"></span></span>
+        </div>
+        <div class="row">
+          <span class="label">Total</span>
+          <span class="value-col value-row">
+            <span class="strike" id="sumStrike" hidden></span>
+            <span class="total" id="sumTotal"><span class="skel price"></span></span>
+            <span class="save" id="sumSave" hidden></span>
+          </span>
+        </div>
+      </section>
+
+      <form id="payment-form" class="rise" style="--delay: 380ms;" novalidate>
+        <div class="pay-wrap">
+          <div class="element-shell" id="elementShell" aria-hidden="true">
+            <div class="securing">
+              <span class="ind"></span>
+              <span>Securing your session…</span>
+            </div>
+            <div class="bar tall"></div>
+            <div class="bar short"></div>
+            <div class="bar"></div>
+          </div>
+          <div id="payment-element"></div>
+        </div>
+
+        <button id="submit" class="pay-btn" type="submit" disabled
+                aria-label="Start learning instantly" aria-live="polite"
+                data-ab="buttonText">
+          <span class="state state-idle is-active">
+            <svg class="lock" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="4" y="11" width="16" height="10" rx="2"/>
+              <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+            </svg>
+            <span id="btnLabel">Start learning instantly</span>
+          </span>
+          <span class="state state-loading">
+            <span class="spinner" aria-hidden="true"></span>
+            <span>Processing…</span>
+          </span>
+          <span class="state state-success">
+            <svg class="check" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 12l5 5 11-11"/>
+            </svg>
+            <span>Payment confirmed</span>
+          </span>
+        </button>
+        <p class="btn-subtext" data-ab="buttonSubtext">Instant access after payment</p>
+      </form>
+
+      <!-- Risk reversal. Hover-tilts the shield to add a touch of life. -->
+      <div class="guarantee rise" style="--delay: 420ms;" tabindex="0" aria-label="30-day money-back guarantee">
+        <svg class="shield" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3l8 3v6c0 4.5-3.5 8-8 9-4.5-1-8-4.5-8-9V6z"/>
+          <path d="M9 12l2 2 4-4"/>
+        </svg>
+        <span><strong style="color: var(--text);">30-day money-back guarantee</strong> · Full refund, no questions asked.</span>
+      </div>
+
+      <!-- Real-time social proof. Hidden until /create-intent returns
+           stats.recentEnrollmentsLastHour > 0 — we never fabricate. -->
+      <div class="realtime" id="realtime" aria-live="polite">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span id="realtimeText"></span>
+      </div>
+
+      <div class="methods rise" style="--delay: 460ms;" aria-label="Accepted payment methods">
+        <span class="method">Visa</span>
+        <span class="method">Mastercard</span>
+        <span class="method">Apple Pay</span>
+        <span class="method">Google Pay</span>
+      </div>
+
+      <p class="encryption rise" style="--delay: 500ms;">
+        Your payment is encrypted and protected.
+      </p>
+
+      <div class="trust rise" style="--delay: 540ms;">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <span>Secured by Stripe · PCI DSS</span>
+      </div>
+
+      <a class="back rise" style="--delay: 580ms;" href="dashboard.html">← Back to catalog</a>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // ── A/B configuration layer ────────────────────────────────────
+      // Every swappable copy string / layout flag lives here. An
+      // experimentation tool sets `window.ENE_PAYMENT_CONFIG` BEFORE
+      // this script runs to flip a variant. The `data-ab="..."` attrs
+      // in the markup pair with these keys so a selector can retarget.
+      const AB_DEFAULTS = {
+        headline: 'Start learning instantly',
+        buttonText: 'Start learning instantly',
+        buttonSubtext: 'Instant access after payment',
+        benefits: [
+          'Lifetime access',
+          'Certificate of completion',
+          'Mobile & desktop access',
+          'Money-back guarantee',
+        ],
+        // How long (ms) the session-based urgency banner shows for.
+        // Set to 0 to disable urgency entirely.
+        urgencyMs: 15 * 60 * 1000,
+        // Only show urgency when the course has an actual discount
+        // (originalPrice > price). Honest urgency beats fake deadlines.
+        urgencyRequiresDiscount: true,
+        // Device-aware payment method ordering at mount time.
+        preferWalletByDevice: true,
+      };
+      const AB = Object.assign({}, AB_DEFAULTS, window.ENE_PAYMENT_CONFIG || {});
+
+      // Apply A/B copy to the markup.
+      (function applyAB() {
+        const map = {
+          headline:      AB.headline,
+          buttonText:    AB.buttonText,
+          buttonSubtext: AB.buttonSubtext,
+        };
+        document.querySelectorAll('[data-ab]').forEach((el) => {
+          const k = el.dataset.ab;
+          if (!map[k]) return;
+          if (el.tagName === 'BUTTON') {
+            const label = el.querySelector('#btnLabel');
+            if (label) label.textContent = map[k];
+            el.setAttribute('aria-label', map[k]);
+          } else {
+            el.textContent = map[k];
+          }
+        });
+      })();
+
+      // Render benefits checklist from AB config.
+      (function renderBenefits() {
+        const ul = document.getElementById('benefits');
+        if (!ul) return;
+        const frag = document.createDocumentFragment();
+        for (const b of AB.benefits) {
+          const li = document.createElement('li');
+          li.innerHTML =
+            '<span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5 11-11"/></svg></span>';
+          const span = document.createElement('span');
+          span.textContent = b; // escape via textContent
+          li.appendChild(span);
+          frag.appendChild(li);
+        }
+        ul.appendChild(frag);
+      })();
+
+      // ── Analytics layer ────────────────────────────────────────────
+      // Dispatches a CustomEvent + forwards to gtag / dataLayer / any
+      // listener. Every integration hook (GA4, Segment, PostHog, custom
+      // webhook) just subscribes to `ene:analytics`. Zero vendor lock.
+      const analytics = {
+        track(event, props = {}) {
+          const payload = Object.assign({ event, ts: Date.now() }, props);
+          try {
+            window.dispatchEvent(new CustomEvent('ene:analytics', { detail: payload }));
+            if (typeof window.gtag === 'function') window.gtag('event', event, props);
+            if (Array.isArray(window.dataLayer)) window.dataLayer.push(Object.assign({ event }, props));
+          } catch (_) { /* never break UX on analytics failures */ }
+        }
+      };
+      window.eneAnalytics = analytics;
+
+      // ── Device-aware wallet preference ────────────────────────────
+      function preferredMethodOrder() {
+        if (!AB.preferWalletByDevice) return undefined;
+        const ua = navigator.userAgent || '';
+        const platform = (navigator.userAgentData && navigator.userAgentData.platform) || '';
+        const isAppleDevice = /iPhone|iPad|iPod|Macintosh/i.test(ua) || /mac/i.test(platform);
+        const isAndroid = /Android/i.test(ua);
+        if (isAppleDevice) return ['apple_pay', 'card', 'link', 'google_pay'];
+        if (isAndroid)     return ['google_pay', 'card', 'link', 'apple_pay'];
+        return ['card', 'link', 'apple_pay', 'google_pay'];
+      }
+
+      // ── DOM refs ──────────────────────────────────────────────────
+      const card         = document.querySelector('.card');
+      const msg          = document.getElementById('msg');
+      const submitBtn    = document.getElementById('submit');
+      const btnLabel     = document.getElementById('btnLabel');
+      const form         = document.getElementById('payment-form');
+      const elementShell = document.getElementById('elementShell');
+      const pmEl         = document.getElementById('payment-element');
+      const welcomeEl    = document.getElementById('welcome');
+      const valueThumb   = document.getElementById('valueThumb');
+      const valueTitle   = document.getElementById('valueTitle');
+      const valueInstr   = document.getElementById('valueInstructor');
+      const valueDesc    = document.getElementById('valueDesc');
+      const valueCat     = document.getElementById('valueCategory');
+      const badgePop     = document.getElementById('badgePopular');
+      const ratingWrap   = document.getElementById('ratingWrap');
+      const ratingVal    = document.getElementById('ratingVal');
+      const ratingCount  = document.getElementById('ratingCount');
+      const starsEl      = document.getElementById('starsEl');
+      const socialSep    = document.getElementById('socialSep');
+      const studentCount = document.getElementById('studentCount');
+      const sumTitleEl   = document.getElementById('sumTitle');
+      const sumEmailEl   = document.getElementById('sumEmail');
+      const sumTotalEl   = document.getElementById('sumTotal');
+      const sumStrike    = document.getElementById('sumStrike');
+      const sumSave      = document.getElementById('sumSave');
+      const urgencyEl    = document.getElementById('urgency');
+      const urgencyTimer = document.getElementById('urgencyTimer');
+      const realtime     = document.getElementById('realtime');
+      const realtimeText = document.getElementById('realtimeText');
+
+      card.addEventListener('animationend', () => card.classList.add('settled'), { once: true });
+
+      function showError(text) {
+        msg.textContent = text;
+        msg.className = 'msg show error';
+        msg.classList.remove('shake');
+        void msg.offsetWidth;
+        msg.classList.add('shake');
+        submitBtn.focus({ preventScroll: true });
+        analytics.track('payment_error', { message: text });
+      }
+      function clearError() { if (msg.classList.contains('error')) msg.className = 'msg'; }
+
+      function setButtonState(state) {
+        submitBtn.classList.remove('loading', 'success');
+        for (const el of submitBtn.querySelectorAll('.state')) el.classList.remove('is-active');
+        const target = submitBtn.querySelector('.state-' + state);
+        if (target) target.classList.add('is-active');
+        if (state !== 'idle') submitBtn.classList.add(state);
+      }
+
+      function loadStripeJs() {
+        return new Promise((resolve, reject) => {
+          if (window.Stripe) return resolve(window.Stripe);
+          const s = document.createElement('script');
+          s.src = 'https://js.stripe.com/v3/';
+          s.async = true;
+          s.onload  = () => resolve(window.Stripe);
+          s.onerror = () => reject(new Error('stripe-js-load-failed'));
+          document.head.appendChild(s);
+        });
+      }
+
+      // ── Session-scoped urgency timer ──────────────────────────────
+      // Stored in sessionStorage so a refresh doesn't reset the clock —
+      // that would let users refresh forever. After expiry the timer
+      // greys out but nothing changes functionally; purely a nudge.
+      function initUrgency(hasDiscount) {
+        if (!AB.urgencyMs) return;
+        if (AB.urgencyRequiresDiscount && !hasDiscount) return;
+
+        const KEY = 'ene.checkout.urgencyStart';
+        let start = parseInt(sessionStorage.getItem(KEY), 10);
+        if (!start || Number.isNaN(start)) {
+          start = Date.now();
+          try { sessionStorage.setItem(KEY, String(start)); } catch (_) {}
+        }
+        const expiresAt = start + AB.urgencyMs;
+
+        function fmt(ms) {
+          if (ms <= 0) return '00:00';
+          const s = Math.floor(ms / 1000);
+          const m = Math.floor(s / 60);
+          const r = s % 60;
+          return (m < 10 ? '0' : '') + m + ':' + (r < 10 ? '0' : '') + r;
+        }
+
+        urgencyEl.hidden = false;
+        let tickHandle = null;
+        function render() {
+          const remaining = expiresAt - Date.now();
+          urgencyTimer.textContent = fmt(remaining);
+          if (remaining <= 0) {
+            urgencyEl.classList.add('expired');
+            if (tickHandle) clearInterval(tickHandle);
+          }
+        }
+        render();
+        tickHandle = setInterval(render, 1000);
+      }
+
+      // ── Main init ──────────────────────────────────────────────────
+      (async function initCheckout() {
+        api.requireAuth();
+
+        const courseId = new URLSearchParams(window.location.search).get('courseId');
+        if (!courseId) {
+          showError('No course selected. Go back and pick a course.');
+          submitBtn.remove();
+          return;
+        }
+
+        analytics.track('payment_started', { courseId });
+
+        // Parallel fetch — Stripe.js, user profile, standalone course
+        // info (for graceful degradation when /create-intent fails),
+        // and PaymentIntent creation itself.
+        const [, meRes, courseRes, intentRes] = await Promise.all([
+          loadStripeJs().catch(() => null),
+          api.me().catch(() => null),              // cached across pages
+          api.get('/courses/' + encodeURIComponent(courseId)).catch(() => null),
+          api.post('/payments/create-intent', { courseId }).catch(() => null),
+        ]);
+
+        const userData = (meRes && meRes.body && meRes.body.data) || {};
+        const userEmail = userData.email || '';
+        const userName  = (userData.name || '').trim();
+        const firstName = userName ? userName.split(' ')[0] : '';
+
+        // Distinguish between a REAL auth failure (user's session expired)
+        // and a service-side 401 (e.g. Stripe rejecting a bad/missing API
+        // key — which the SDK bubbles up as 401). `meRes.ok` confirms the
+        // user IS authenticated; in that case we fall through and render
+        // the course info so the user still knows what they were buying.
+        const sessionValid = !!(meRes && meRes.ok);
+        if (!sessionValid && (!intentRes || intentRes.status === 401)) {
+          window.location.href = 'login.html';
+          return;
+        }
+        if (intentRes && intentRes.status === 409) {
+          showError('You are already enrolled in this course.');
+          setTimeout(() => (window.location.href = 'course.html?id=' + courseId), 1200);
+          return;
+        }
+
+        // Populate the summary from whatever we can resolve. Even if
+        // create-intent fails (e.g. Stripe not configured on this env),
+        // the user should still see what course they were buying —
+        // blank skeletons feel like a broken site. We fall back to the
+        // standalone /courses/:id response for course info.
+        const intentOk = intentRes && intentRes.ok && intentRes.body && intentRes.body.success;
+        const data = intentOk ? intentRes.body.data : null;
+        const fallbackCourse = (courseRes && courseRes.ok && courseRes.body && courseRes.body.data) || null;
+        const course = (data && data.course) || fallbackCourse || {};
+        const stats  = (data && data.stats)  || {};
+
+        if (!intentOk) {
+          const why = (intentRes && intentRes.body && intentRes.body.message) || 'Payments are temporarily unavailable.';
+          showError(why);
+          // Continue past this point so the summary + trust row still
+          // render. We skip Stripe Elements mount further down.
+        }
+
+        // Personalization.
+        if (firstName) {
+          welcomeEl.innerHTML = 'Welcome back, <span class="accent"></span>';
+          welcomeEl.querySelector('.accent').textContent = firstName;
+        }
+
+        // Value block fill — prominent product showcase.
+        valueTitle.textContent = course.title || 'Course';
+        valueInstr.textContent = course.instructor ? 'with ' + course.instructor : '';
+        if (course.category) {
+          valueCat.textContent = course.category;
+          valueCat.hidden = false;
+        }
+        if (course.description) {
+          // Clip long descriptions to a tight 2-line blurb; CSS already
+          // enforces the visual clamp but trimming server-side keeps the
+          // DOM clean for screen readers.
+          const desc = String(course.description).trim();
+          valueDesc.textContent = desc.length > 180 ? desc.slice(0, 177) + '…' : desc;
+          valueDesc.hidden = false;
+        }
+        if (course.image) {
+          const img = document.createElement('img');
+          img.src = course.image;
+          img.alt = ''; // decorative; title already announced
+          img.loading = 'lazy';
+          valueThumb.textContent = '';
+          valueThumb.appendChild(img);
+        }
+        if (course.badge === 'popular' || course.badge === 'bestseller') {
+          badgePop.textContent = course.badge === 'bestseller' ? 'Bestseller' : 'Most popular';
+          badgePop.hidden = false;
+        }
+        if (course.rating && course.ratingCount > 0) {
+          const pct = Math.max(0, Math.min(100, (course.rating / 5) * 100));
+          starsEl.style.setProperty('--pct', pct.toFixed(1) + '%');
+          ratingVal.textContent = course.rating.toFixed(1);
+          ratingCount.textContent = '(' + new Intl.NumberFormat().format(course.ratingCount) + ')';
+          ratingWrap.hidden = false;
+        }
+        if (stats.studentCount > 0) {
+          const fmt = new Intl.NumberFormat().format(stats.studentCount);
+          studentCount.textContent = 'Join ' + fmt + '+ student' + (stats.studentCount === 1 ? '' : 's');
+          studentCount.hidden = false;
+          if (!ratingWrap.hidden) socialSep.hidden = false;
+        }
+
+        // Real-time signal — only renders when >0 to stay honest.
+        if (stats.recentEnrollmentsLastHour > 0) {
+          const n = Math.min(stats.recentEnrollmentsLastHour, 50); // cap display
+          const label = (n >= 50 ? '50+' : String(n)) + ' ' +
+                        (n === 1 ? 'person' : 'people') + ' enrolled in the last hour';
+          realtimeText.textContent = label;
+          // Delay the reveal so it slots in AFTER the entrance cascade —
+          // feels like a "live update" rather than a static element.
+          setTimeout(() => realtime.classList.add('show'), 900);
+        }
+
+        // Summary — derive amount from intent when we have it, else
+        // fall back to the course document. The server ALWAYS re-computes
+        // at checkout time so this is a display-only fallback.
+        sumTitleEl.textContent = course.title || '—';
+        sumEmailEl.textContent = userEmail || '—';
+
+        const amountDollars = data && typeof data.amount === 'number'
+          ? data.amount / 100
+          : Number(course.price) || 0;
+        const currency = (data && data.currency) ? String(data.currency).toUpperCase() : 'USD';
+        const amountFmt = '$' + amountDollars.toFixed(2);
+        sumTotalEl.textContent = amountFmt + ' ' + currency;
+
+        // Strikethrough + savings badge — only when originalPrice is
+        // really higher than the current price. Server-side fields, so
+        // the client can't inflate a fake "was $999".
+        const originalPrice = Number(course.originalPrice) || 0;
+        const hasDiscount = originalPrice > amountDollars + 0.01;
+        if (hasDiscount) {
+          sumStrike.textContent = '$' + originalPrice.toFixed(2);
+          sumStrike.hidden = false;
+          const savedPct = Math.round(((originalPrice - amountDollars) / originalPrice) * 100);
+          if (savedPct > 0) {
+            sumSave.textContent = 'Save ' + savedPct + '%';
+            sumSave.hidden = false;
+          }
+        }
+
+        initUrgency(hasDiscount);
+
+        // Skip Stripe Elements when the intent failed. The summary +
+        // trust layer above has already rendered; the button and the
+        // Payment Element stay hidden / disabled with the error banner.
+        if (!intentOk) return;
+
+        if (!window.Stripe) {
+          showError("We can't load the secure payment form right now. Refresh the page to retry.");
+          return;
+        }
+        if (!data.publishableKey) {
+          showError('Payments are not configured on this environment.');
+          return;
+        }
+
+        // ── Mount Stripe Elements ──────────────────────────────────
+        const stripe = window.Stripe(data.publishableKey);
+        const elements = stripe.elements({
+          clientSecret: data.clientSecret,
+          appearance: {
+            theme: 'night',
+            variables: {
+              colorPrimary:         '#f48003',
+              colorBackground:      'rgba(255,255,255,0.02)',
+              colorText:            '#f5f5fa',
+              colorTextSecondary:   'rgba(245,245,250,0.72)',
+              colorTextPlaceholder: 'rgba(245,245,250,0.45)',
+              colorDanger:          '#ff7a7a',
+              colorSuccess:         '#15c7bc',
+              fontFamily:           'Inter, system-ui, -apple-system, sans-serif',
+              fontSizeBase:         '15px',
+              spacingUnit:          '4px',
+              borderRadius:         '8px',
+            },
+            rules: {
+              '.Input': {
+                border: '1px solid rgba(255,255,255,0.14)',
+                boxShadow: 'none',
+                transition: 'border-color 200ms cubic-bezier(0.2,0.8,0.2,1), box-shadow 200ms cubic-bezier(0.2,0.8,0.2,1)',
+              },
+              '.Input:focus': { borderColor: '#f48003', boxShadow: '0 0 0 1px #f48003' },
+              '.Label': {
+                color: 'rgba(245,245,250,0.72)',
+                fontSize: '11px',
+                fontWeight: '500',
+                textTransform: 'uppercase',
+                letterSpacing: '0.14em',
+                fontFamily: 'JetBrains Mono, monospace',
+              },
+              '.Tab': {
+                border: '1px solid rgba(255,255,255,0.14)',
+                backgroundColor: 'rgba(255,255,255,0.02)',
+                transition: 'border-color 200ms cubic-bezier(0.2,0.8,0.2,1), box-shadow 200ms cubic-bezier(0.2,0.8,0.2,1)',
+              },
+              '.Tab:hover': { color: '#ff9a2e' },
+              '.Tab--selected': { borderColor: '#f48003', boxShadow: '0 0 0 1px #f48003' },
+            },
+          },
+        });
+
+        const paymentElement = elements.create('payment', {
+          layout: 'tabs',
+          paymentMethodOrder: preferredMethodOrder(),
+          defaultValues: { billingDetails: { email: userEmail, name: userName || undefined } },
+          wallets: { applePay: 'auto', googlePay: 'auto' },
+        });
+        paymentElement.mount('#payment-element');
+
+        paymentElement.on('ready', () => {
+          elementShell.classList.add('hidden');
+          pmEl.classList.add('mounted');
+          setTimeout(() => elementShell.remove(), 420);
+          submitBtn.disabled = false;
+        });
+        paymentElement.on('focus', () => pmEl.classList.add('focused'));
+        paymentElement.on('blur',  () => pmEl.classList.remove('focused'));
+        paymentElement.on('change', (e) => {
+          if (e.error) showError(e.error.message); else clearError();
+        });
+
+        // ── Submit ─────────────────────────────────────────────────
+        let submitting = false;
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          if (submitting || submitBtn.disabled) return;
+          submitting = true;
+          clearError();
+          submitBtn.disabled = true;
+          setButtonState('loading');
+          analytics.track('button_clicked', { button: 'pay', courseId });
+
+          const result = await stripe.confirmPayment({
+            elements,
+            confirmParams: {
+              return_url: window.location.origin + '/payment-success.html?courseId=' + encodeURIComponent(courseId),
+              receipt_email: userEmail || undefined,
+            },
+            redirect: 'if_required',
+          });
+
+          if (result.error) {
+            const friendly =
+              result.error.type === 'card_error' || result.error.type === 'validation_error'
+                ? result.error.message
+                : 'Payment failed. Please check your details and try again.';
+            showError(friendly);
+            analytics.track('payment_failed', {
+              courseId,
+              code: result.error.code,
+              type: result.error.type,
+            });
+            submitBtn.disabled = false;
+            setButtonState('idle');
+            submitting = false;
+            return;
+          }
+
+          const pi = result.paymentIntent;
+          if (pi && (pi.status === 'succeeded' || pi.status === 'processing')) {
+            setButtonState('success');
+            analytics.track('payment_completed', {
+              courseId,
+              paymentIntentId: pi.id,
+              amount: data.amount,
+              currency: data.currency,
+              status: pi.status,
+            });
+            // Clear the urgency window — it's done its job.
+            try { sessionStorage.removeItem('ene.checkout.urgencyStart'); } catch (_) {}
+            setTimeout(() => {
+              window.location.href =
+                window.location.origin +
+                '/payment-success.html?courseId=' + encodeURIComponent(courseId) +
+                '&payment_intent=' + encodeURIComponent(pi.id) +
+                '&redirect_status=' + encodeURIComponent(pi.status === 'succeeded' ? 'succeeded' : 'processing');
+            }, 820);
+            return;
+          }
+
+          showError('Payment did not complete. Please try again.');
+          submitBtn.disabled = false;
+          setButtonState('idle');
+          submitting = false;
+        });
+      })();
+    })();
+  </script>
+</body>
+</html>

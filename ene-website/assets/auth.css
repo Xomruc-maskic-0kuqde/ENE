@@ -1,0 +1,311 @@
+/* Shared styles for login, register, and dashboard pages
+   Matches the ENE landing page aesthetic: dark navy + orange accents */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --o: #f48003;
+  --ol: #ff9a2e;
+  --t: #15c7bc;
+  --n: #18185e;
+  --nd: #0a0a2e;
+  --nl: #252580;
+  --w: #ffffff;
+  --muted: rgba(255, 255, 255, 0.55);
+  --muted-dim: rgba(255, 255, 255, 0.38);
+  --fh: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --fb: 'Source Sans 3', system-ui, sans-serif;
+  --err: #ff5a5a;
+  --ok: #15c7bc;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--fb);
+  color: var(--w);
+  background: var(--nd);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Ambient background — matches the hero atmosphere */
+.bg-atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.bg-atmosphere::before,
+.bg-atmosphere::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+}
+.bg-atmosphere::before {
+  width: 560px;
+  height: 560px;
+  background: radial-gradient(circle, rgba(244, 128, 3, 0.08), transparent 65%);
+  top: -140px;
+  right: -120px;
+}
+.bg-atmosphere::after {
+  width: 440px;
+  height: 440px;
+  background: radial-gradient(circle, rgba(21, 199, 188, 0.05), transparent 65%);
+  bottom: -120px;
+  left: -80px;
+}
+
+/* Layout — centered card for auth, grid for dashboard */
+.page {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.card {
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(155deg, rgba(24, 24, 94, 0.5), rgba(10, 10, 46, 0.8));
+  border: 1px solid rgba(244, 128, 3, 0.12);
+  border-radius: 18px;
+  padding: 44px 36px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.brand {
+  font-family: var(--fh);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--o);
+  margin-bottom: 12px;
+}
+
+h1 {
+  font-family: var(--fh);
+  font-size: 1.85rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 0.98rem;
+  margin-bottom: 28px;
+}
+
+/* Form */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field label {
+  display: block;
+  font-family: var(--fh);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.field input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 12px 14px;
+  color: var(--w);
+  font-family: var(--fb);
+  font-size: 0.98rem;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: var(--o);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.field input::placeholder {
+  color: var(--muted-dim);
+}
+
+button[type='submit'] {
+  background: linear-gradient(135deg, var(--o), var(--ol));
+  color: var(--w);
+  border: none;
+  padding: 14px 24px;
+  border-radius: 8px;
+  font-family: var(--fh);
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.3s, opacity 0.2s;
+  margin-top: 8px;
+}
+
+button[type='submit']:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(244, 128, 3, 0.28);
+}
+
+button[type='submit']:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.alt {
+  margin-top: 22px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.alt a {
+  color: var(--o);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.alt a:hover {
+  text-decoration: underline;
+}
+
+/* Status messages */
+.msg {
+  padding: 11px 14px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  display: none;
+}
+
+.msg.show {
+  display: block;
+}
+
+.msg.error {
+  background: rgba(255, 90, 90, 0.1);
+  border: 1px solid rgba(255, 90, 90, 0.3);
+  color: var(--err);
+}
+
+.msg.success {
+  background: rgba(21, 199, 188, 0.1);
+  border: 1px solid rgba(21, 199, 188, 0.3);
+  color: var(--ok);
+}
+
+/* Dashboard specifics */
+.dash {
+  max-width: 920px;
+  width: 100%;
+  display: grid;
+  gap: 20px;
+}
+
+.dash-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.dash-header h1 {
+  font-size: 2rem;
+  margin-bottom: 0;
+}
+
+.logout {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-family: var(--fh);
+  font-weight: 600;
+  font-size: 0.82rem;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.logout:hover {
+  border-color: var(--o);
+  color: var(--o);
+}
+
+.panel {
+  background: linear-gradient(155deg, rgba(24, 24, 94, 0.5), rgba(10, 10, 46, 0.8));
+  border: 1px solid rgba(244, 128, 3, 0.12);
+  border-radius: 16px;
+  padding: 28px;
+}
+
+.panel h2 {
+  font-family: var(--fh);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--o);
+  margin-bottom: 14px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.row:first-of-type {
+  border-top: none;
+}
+
+.row .k {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.row .v {
+  color: var(--w);
+  font-weight: 600;
+  font-family: var(--fh);
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 32px 22px;
+  }
+  h1 {
+    font-size: 1.55rem;
+  }
+}

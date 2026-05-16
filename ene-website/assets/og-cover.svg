@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ENE Open Graph cover — 1200×630. Industrial direction matching the rest
+  of the site. Rasterize to /assets/og-cover.png before deploy (Twitter,
+  Slack, LinkedIn and most aggregators require PNG or JPEG).
+
+  Quick rasterize options:
+    rsvg-convert -w 1200 og-cover.svg -o og-cover.png
+    magick -background none og-cover.svg -resize 1200x630 og-cover.png
+    npx sharp -i og-cover.svg -o og-cover.png
+
+  Or open in Figma/Illustrator and export PNG at 1200×630.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#050514"/>
+      <stop offset="1" stop-color="#0a0a24"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.85" cy="0" r="0.7">
+      <stop offset="0" stop-color="#f48003" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#f48003" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0" cy="1" r="0.6">
+      <stop offset="0" stop-color="#3550c8" stop-opacity="0.20"/>
+      <stop offset="1" stop-color="#3550c8" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect width="1200" height="630" fill="url(#glow2)"/>
+
+  <!-- Corner brackets -->
+  <g stroke="#f48003" stroke-width="3" fill="none">
+    <path d="M 44 60 L 44 44 L 60 44"/>
+    <path d="M 1140 44 L 1156 44 L 1156 60"/>
+    <path d="M 1156 570 L 1156 586 L 1140 586"/>
+    <path d="M 60 586 L 44 586 L 44 570"/>
+  </g>
+
+  <!-- Top-left status strip -->
+  <g font-family="JetBrains Mono, ui-monospace, monospace" fill="rgba(245,245,250,0.55)" font-size="18" letter-spacing="4">
+    <circle cx="72" cy="92" r="5" fill="#f48003"/>
+    <text x="86" y="97">ENE / ENGINEERING NEW ERA</text>
+    <text x="1142" y="97" text-anchor="end">v1.0</text>
+  </g>
+
+  <!-- Dashed divider -->
+  <line x1="72" y1="118" x2="1128" y2="118" stroke="rgba(255,255,255,0.14)" stroke-dasharray="4 6" stroke-width="1"/>
+
+  <!-- Headline -->
+  <g font-family="Space Grotesk, sans-serif" fill="#f5f5fa">
+    <text x="72" y="260" font-size="96" font-weight="700" letter-spacing="-3.5">The Future Belongs</text>
+    <text x="72" y="358" font-size="96" font-weight="700" letter-spacing="-3.5">to Those Who</text>
+    <text x="72" y="456" font-size="96" font-weight="700" letter-spacing="-3.5" font-style="italic" fill="#f48003">Build It First.</text>
+  </g>
+
+  <!-- Bottom row: kicker + metrics -->
+  <g font-family="JetBrains Mono, ui-monospace, monospace" fill="rgba(245,245,250,0.55)" font-size="18" letter-spacing="3.2">
+    <text x="72" y="550">SENIOR-LED · MASTERY-BASED · ENGINEERING COURSES</text>
+  </g>
+
+  <!-- Metrics strip bottom-right -->
+  <g font-family="Space Grotesk, sans-serif">
+    <g transform="translate(760,510)">
+      <text font-size="40" font-weight="700" fill="#f48003" letter-spacing="-1">500+</text>
+      <text y="30" font-family="JetBrains Mono, monospace" font-size="14" fill="rgba(245,245,250,0.55)" letter-spacing="2.5">GRADUATES</text>
+    </g>
+    <g transform="translate(920,510)">
+      <text font-size="40" font-weight="700" fill="#f48003" letter-spacing="-1">94%</text>
+      <text y="30" font-family="JetBrains Mono, monospace" font-size="14" fill="rgba(245,245,250,0.55)" letter-spacing="2.5">PLACEMENT</text>
+    </g>
+    <g transform="translate(1060,510)">
+      <text font-size="40" font-weight="700" fill="#f48003" letter-spacing="-1">40+</text>
+      <text y="30" font-family="JetBrains Mono, monospace" font-size="14" fill="rgba(245,245,250,0.55)" letter-spacing="2.5">MENTORS</text>
+    </g>
+  </g>
+</svg>

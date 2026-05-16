@@ -1,0 +1,20 @@
+# ENE — robots.txt
+# Replace {{DOMAIN}} with the production host before deploy.
+
+User-agent: *
+Allow: /
+Disallow: /dashboard.html
+Disallow: /course.html
+Disallow: /payment.html
+Disallow: /payment-success.html
+Disallow: /login.html
+Disallow: /register.html
+Disallow: /forgot-password.html
+Disallow: /reset-password.html
+Disallow: /verify-email.html
+Disallow: /api/
+
+# Polite crawl rate — bots don't need to hammer us.
+Crawl-delay: 2
+
+Sitemap: https://{{DOMAIN}}/sitemap.xml

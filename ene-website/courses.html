@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <title>Courses — ENE</title>
+  <meta name="description" content="Browse every course on ENE. Senior-led, mastery-based programs in backend, cloud, frontend, data, AI/ML, and engineering leadership.">
+  <meta property="og:title" content="Courses — ENE" />
+  <meta property="og:description" content="Browse every course on ENE. Senior-led, mastery-based programs." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f48003'/%3E%3Ctext x='50%25' y='54%25' font-family='-apple-system,Inter,sans-serif' font-size='34' font-weight='800' text-anchor='middle' dominant-baseline='middle' fill='%230a0a14'%3EE%3C/text%3E%3C/svg%3E">
+  <script src="assets/config.js?v=1776533472"></script>
+  <script src="assets/sanitize.js?v=1776533472"></script>
+  <script src="assets/api.js?v=1776533472"></script>
+  <script src="assets/analytics.js?v=1" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/tokens.css?v=1">
+  <style>
+    body { background-image:
+      radial-gradient(1000px 600px at 88% -5%, rgba(244,128,3,0.10), transparent 60%),
+      linear-gradient(180deg, var(--bg-0), var(--bg-1)); }
+
+    .nav {
+      position: sticky; top: 0; z-index: 30;
+      background: rgba(8, 8, 31, 0.82);
+      backdrop-filter: blur(18px) saturate(140%);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-inner {
+      max-width: 1240px; margin: 0 auto;
+      padding: 14px clamp(20px, 4vw, 32px);
+      display: flex; align-items: center; gap: 18px;
+    }
+    .nav a.brand {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: var(--font-mono); font-size: .72rem;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--text-soft); text-decoration: none;
+    }
+    .nav a.brand img { height: 22px; filter: drop-shadow(0 6px 14px var(--accent-glow)); }
+    .nav-spacer { flex: 1; }
+    .nav-link {
+      padding: 9px 16px; border-radius: 4px;
+      border: 1px solid var(--line-2);
+      font-family: var(--font-mono); font-size: .72rem;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--text-soft); text-decoration: none;
+      transition: border-color .2s, color .2s;
+    }
+    .nav-link:hover { border-color: var(--accent); color: var(--accent); }
+    .nav-link.primary { background: var(--accent); border-color: var(--accent); color: var(--text-ink); font-weight: 700; }
+    .nav-link.primary:hover { background: var(--accent-2); border-color: var(--accent-2); color: var(--text-ink); }
+
+    .hero { padding: clamp(56px, 8vw, 96px) 0 clamp(32px, 5vw, 56px); }
+    .container { max-width: 1240px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 32px); position: relative; z-index: 1; }
+    .kicker {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: var(--font-mono); font-size: .68rem;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 16px;
+    }
+    .kicker::before { content: '['; } .kicker::after { content: ']'; }
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4.2vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.035em;
+      margin-bottom: 16px;
+    }
+    h1 .accent { color: var(--accent); font-style: italic; font-weight: 700; }
+    .lede { font-size: 1.05rem; color: var(--text-muted); max-width: 640px; margin-bottom: 28px; line-height: 1.7; }
+
+    .filters {
+      display: flex; flex-wrap: wrap; gap: 18px;
+      padding-top: 24px;
+      border-top: 1px dashed var(--line-2);
+      align-items: center;
+    }
+    .search-input {
+      flex: 1; min-width: 220px;
+      padding: 10px 14px 10px 38px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--line-2);
+      border-radius: 4px;
+      color: var(--text);
+      font: inherit; font-size: .92rem;
+      position: relative;
+    }
+    .search-wrap { position: relative; flex: 1; min-width: 220px; max-width: 360px; }
+    .search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--text-muted); pointer-events: none; }
+    .search-wrap input {
+      width: 100%;
+      padding: 10px 14px 10px 38px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--line-2);
+      border-radius: 4px;
+      color: var(--text);
+      font: inherit; font-size: .92rem;
+      transition: border-color .2s, background-color .2s, box-shadow .2s;
+    }
+    .search-wrap input:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, 0.07);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    .chips {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .chip {
+      padding: 7px 14px; border-radius: 999px;
+      border: 1px solid var(--line-2);
+      background: transparent;
+      font-family: var(--font-mono); font-size: .68rem; font-weight: 600;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--text-soft);
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .chip:hover { border-color: var(--accent); color: var(--accent); }
+    .chip[aria-pressed="true"] {
+      background: var(--accent); border-color: var(--accent); color: var(--text-ink);
+    }
+
+    .count {
+      font-family: var(--font-mono); font-size: .7rem; letter-spacing: 0.14em;
+      color: var(--text-muted);
+    }
+    .count strong { color: var(--text); font-weight: 600; }
+
+    .catalog { padding: 20px 0 clamp(64px, 8vw, 120px); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    @media (max-width: 960px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+
+    .pc-img-card {
+      position: relative;
+      display: flex; flex-direction: column;
+      text-decoration: none; color: inherit;
+      background: linear-gradient(180deg, var(--surface), var(--surface-2));
+      border: 1px solid var(--line-2);
+      border-radius: 4px;
+      overflow: hidden;
+      transition: transform .4s var(--ease-standard), border-color .4s, box-shadow .4s;
+    }
+    .pc-img-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: var(--accent);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .45s var(--ease-standard);
+      z-index: 4;
+    }
+    .pc-img-card:hover { transform: translateY(-5px); border-color: rgba(244,128,3,.3); box-shadow: 0 24px 52px rgba(0,0,0,.4); }
+    .pc-img-card:hover::before { transform: scaleX(1); }
+    .pc-img { position: relative; aspect-ratio: 16/10; overflow: hidden; background: linear-gradient(135deg, #18185e, #252580); }
+    .pc-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .7s var(--ease-standard); filter: saturate(1.05) brightness(.88); }
+    .pc-img-card:hover .pc-img img { transform: scale(1.06); filter: saturate(1.1) brightness(.95); }
+    .pc-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(5,5,15,.7) 100%); }
+    .pc-img-tag {
+      position: absolute; top: 12px; left: 12px; z-index: 2;
+      padding: 5px 12px; border-radius: 2px;
+      background: rgba(0, 0, 0, .55);
+      -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+      border: 1px solid var(--line-2);
+      font-family: var(--font-mono); font-size: .62rem; font-weight: 600;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--text);
+    }
+    .pc-img-price {
+      position: absolute; top: 12px; right: 12px; z-index: 2;
+      padding: 5px 12px; border-radius: 2px;
+      background: var(--accent); color: var(--text-ink);
+      font-family: var(--font-mono); font-size: .68rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+    }
+    .pc-img-price.free {
+      background: rgba(0, 0, 0, .65);
+      color: var(--accent);
+      border: 1px solid rgba(244,128,3,.38);
+    }
+    .pc-img-body { padding: 22px 22px 20px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .pc-img-body h3 { font-family: var(--font-display); font-weight: 700; font-size: 1.08rem; line-height: 1.3; letter-spacing: -0.01em; color: var(--text); }
+    .pc-img-inst { font-family: var(--font-mono); font-size: .68rem; font-weight: 500; color: var(--text-muted); letter-spacing: 0.14em; text-transform: uppercase; }
+    .pc-img-desc { font-size: .9rem; color: var(--text-muted); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 2px; }
+    .pc-img-meta {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: auto; padding-top: 16px;
+      border-top: 1px dashed var(--line-2);
+      font-family: var(--font-mono); font-size: .68rem; letter-spacing: 0.14em; color: var(--text-muted); text-transform: uppercase;
+    }
+    .pc-img-cta {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px; border-radius: 2px;
+      background: transparent;
+      border: 1px solid var(--line-2);
+      color: var(--text-soft);
+      font-family: var(--font-mono); font-weight: 700; font-size: .68rem;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      transition: all .3s var(--ease-standard);
+    }
+    .pc-img-card:hover .pc-img-cta { background: var(--accent); border-color: var(--accent); color: var(--text-ink); }
+
+    /* States */
+    .state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 80px 20px;
+      border: 1px dashed var(--line-2);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, .02);
+    }
+    .state-dot {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: var(--font-mono); font-size: .68rem;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .state-dot::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); animation: ene-pulse 2s infinite; }
+    .state-dot.err { color: var(--error); }
+    .state-dot.err::before { background: var(--error); box-shadow: 0 0 10px var(--error); animation: none; }
+    .state h2 { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text); margin-bottom: 10px; }
+    .state p { color: var(--text-muted); font-size: .95rem; max-width: 420px; margin: 0 auto 20px; }
+    .state a {
+      display: inline-block;
+      background: var(--accent); color: var(--text-ink);
+      padding: 12px 22px; border-radius: 4px;
+      font-family: var(--font-mono); font-weight: 700; font-size: .78rem;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .foot {
+      border-top: 1px solid var(--line);
+      padding: 36px 0;
+      font-family: var(--font-mono); font-size: .7rem;
+      letter-spacing: 0.12em; color: var(--text-muted);
+      text-align: center;
+    }
+    .foot a { color: var(--accent); text-decoration: none; margin: 0 10px; }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="index.html"><img src="assets/logo.png" alt="ENE"><span>ENE / Catalog</span></a>
+      <span class="nav-spacer"></span>
+      <a class="nav-link" href="pricing.html">Pricing</a>
+      <a class="nav-link primary" id="navAccount" href="login.html">Sign in</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <span class="kicker">All Courses</span>
+      <h1>Every program we run,<br>in <span class="accent">one catalog.</span></h1>
+      <p class="lede">Senior-led, mastery-based tracks — backend, cloud, frontend, data, AI/ML, leadership. Filter, search, pick your entry point.</p>
+      <div class="filters">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input id="search" type="search" placeholder="Search courses, topics, instructors…" aria-label="Search courses" maxlength="120" data-sanitize="search">
+        </div>
+        <div class="chips" id="chips" role="tablist" aria-label="Filter by category">
+          <button type="button" class="chip" data-cat="all" aria-pressed="true">All</button>
+        </div>
+        <span class="count" id="count" aria-live="polite"></span>
+      </div>
+    </div>
+  </header>
+
+  <section class="catalog" id="main" tabindex="-1">
+    <div class="container">
+      <div class="grid" id="grid" aria-live="polite">
+        <div class="state">
+          <span class="state-dot">Loading catalog</span>
+          <h2>Fetching courses…</h2>
+          <p>Hang on a sec — pulling the latest catalog.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <a href="index.html">Home</a> · <a href="pricing.html">Pricing</a> · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+      var S = window.Sanitize || { escape: function (s) { return String(s == null ? '' : s); } };
+      var grid = document.getElementById('grid');
+      var chips = document.getElementById('chips');
+      var count = document.getElementById('count');
+      var search = document.getElementById('search');
+      var navAccount = document.getElementById('navAccount');
+
+      var all = [];
+      var activeCat = 'all';
+      var query = '';
+
+      function truncate(s, n) { var t = String(s || ''); return t.length > n ? t.slice(0, n - 1).trimEnd() + '…' : t; }
+
+      function render() {
+        var q = query.trim().toLowerCase();
+        var filtered = all.filter(function (c) {
+          if (activeCat !== 'all' && (c.category || '').toLowerCase() !== activeCat) return false;
+          if (!q) return true;
+          return (c.title || '').toLowerCase().indexOf(q) >= 0
+              || (c.instructor || '').toLowerCase().indexOf(q) >= 0
+              || (c.description || '').toLowerCase().indexOf(q) >= 0
+              || (c.category || '').toLowerCase().indexOf(q) >= 0;
+        });
+
+        count.innerHTML = '<strong>' + filtered.length + '</strong> of ' + all.length + ' course' + (all.length === 1 ? '' : 's');
+
+        if (!filtered.length) {
+          grid.innerHTML = '<div class="state"><span class="state-dot">No matches</span><h2>Nothing matches that filter</h2><p>Try a different search term or reset the category.</p><a href="#" id="resetFilters">Reset filters →</a></div>';
+          var reset = document.getElementById('resetFilters');
+          if (reset) reset.addEventListener('click', function (e) { e.preventDefault(); activeCat = 'all'; query = ''; search.value = ''; updateChips(); render(); });
+          return;
+        }
+
+        grid.innerHTML = filtered.map(function (c) {
+          var safeImage = (S.url ? S.url(c.image, { schemes: ['https:'] }) : '') || '';
+          var img = safeImage ? '<img src="' + S.escape(safeImage) + '" alt="' + S.escape(c.title || '') + '" loading="lazy">' : '';
+          var duration = S.escape(c.duration || 'Self-paced');
+          var priceClass = (c.price && c.price > 0) ? 'pc-img-price' : 'pc-img-price free';
+          var priceLabel = (c.price && c.price > 0) ? ('$' + c.price) : 'FREE';
+          var desc = S.escape(truncate(c.description, 120));
+          var href = c._id ? ('course-landing.html?id=' + encodeURIComponent(c._id)) : 'login.html';
+          return '<a href="' + href + '" class="pc-img-card">'
+            + '<div class="pc-img">'
+              + '<span class="pc-img-tag">' + S.escape(c.category || 'Course') + '</span>'
+              + '<span class="' + priceClass + '">' + priceLabel + '</span>'
+              + img
+            + '</div>'
+            + '<div class="pc-img-body">'
+              + '<h3>' + S.escape(c.title || 'Untitled course') + '</h3>'
+              + '<div class="pc-img-inst">' + (c.instructor ? 'With ' + S.escape(c.instructor) : '&nbsp;') + '</div>'
+              + (desc ? '<p class="pc-img-desc">' + desc + '</p>' : '')
+              + '<div class="pc-img-meta">'
+                + '<span>' + duration + '</span>'
+                + '<span class="pc-img-cta">View course →</span>'
+              + '</div>'
+            + '</div>'
+          + '</a>';
+        }).join('');
+      }
+
+      function updateChips() {
+        var nodes = chips.querySelectorAll('button[data-cat]');
+        nodes.forEach(function (n) { n.setAttribute('aria-pressed', String(n.dataset.cat === activeCat)); });
+      }
+
+      function buildChips() {
+        var cats = {};
+        all.forEach(function (c) { if (c.category) cats[c.category] = true; });
+        var keys = Object.keys(cats).sort();
+        // Keep the "All" chip + append one per discovered category.
+        chips.innerHTML = '<button type="button" class="chip" data-cat="all" aria-pressed="true">All</button>'
+          + keys.map(function (k) {
+              return '<button type="button" class="chip" data-cat="' + S.escape(k.toLowerCase()) + '">' + S.escape(k) + '</button>';
+            }).join('');
+        chips.querySelectorAll('button[data-cat]').forEach(function (btn) {
+          btn.addEventListener('click', function () { activeCat = btn.dataset.cat; updateChips(); render(); });
+        });
+      }
+
+      function errorState(msg) {
+        grid.innerHTML = '<div class="state"><span class="state-dot err">Offline</span><h2>Can&rsquo;t reach the catalog</h2><p>' + S.escape(msg || 'The service is temporarily unreachable. Try again in a moment.') + '</p><a href="index.html">Back to home →</a></div>';
+        count.textContent = '';
+      }
+
+      search.addEventListener('input', function () { query = search.value || ''; render(); });
+
+      (async function boot() {
+        try {
+          var navRes = window.api && api.isAuthed() ? await api.me().catch(function () { return null; }) : null;
+          if (navRes && navRes.ok) { navAccount.textContent = 'Dashboard'; navAccount.href = 'dashboard.html'; }
+          var res = await fetch(window.ENE_API_BASE + '/courses');
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          var data = await res.json();
+          all = (data && data.data) || [];
+          if (!all.length) {
+            grid.innerHTML = '<div class="state"><span class="state-dot">Empty</span><h2>No courses yet</h2><p>The catalog is being prepared. Check back soon.</p><a href="index.html">Back to home →</a></div>';
+            count.textContent = '';
+            return;
+          }
+          buildChips();
+          render();
+        } catch (err) {
+          errorState(err && err.message);
+        }
+      })();
+    })();
+  </script>
+</body>
+</html>

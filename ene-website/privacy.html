@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <title>Privacy Policy — ENE</title>
+  <meta name="description" content="How ENE — Engineering New Era collects, uses, and protects your information.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f48003'/%3E%3Ctext x='50%25' y='54%25' font-family='-apple-system,Inter,sans-serif' font-size='34' font-weight='800' text-anchor='middle' dominant-baseline='middle' fill='%230a0a14'%3EE%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/tokens.css?v=1">
+  <style>
+    body {
+      background-image:
+        radial-gradient(900px 500px at 85% -5%, rgba(244, 128, 3, 0.08), transparent 60%),
+        linear-gradient(180deg, var(--bg-0), var(--bg-1));
+    }
+    .legal-nav {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(8, 8, 31, 0.82);
+      backdrop-filter: blur(18px) saturate(140%);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
+      border-bottom: 1px solid var(--line);
+    }
+    .legal-nav .inner {
+      max-width: 820px; margin: 0 auto;
+      padding: 14px clamp(20px, 4vw, 32px);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .legal-nav a.brand {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: var(--font-mono); font-size: .72rem;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--text-soft); text-decoration: none;
+    }
+    .legal-nav a.brand img { height: 22px; filter: drop-shadow(0 6px 14px var(--accent-glow)); }
+    .legal-nav .back {
+      padding: 8px 14px; border-radius: 4px;
+      border: 1px solid var(--line-2);
+      font-family: var(--font-mono); font-size: .7rem;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--text-soft); text-decoration: none;
+      transition: border-color .2s, color .2s;
+    }
+    .legal-nav .back:hover { border-color: var(--accent); color: var(--accent); }
+
+    .legal {
+      max-width: 820px; margin: 0 auto;
+      padding: clamp(48px, 8vw, 96px) clamp(20px, 4vw, 32px) 80px;
+    }
+    .legal .kicker {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: var(--font-mono); font-size: .68rem;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+    .legal .kicker::before { content: '['; color: var(--accent); }
+    .legal .kicker::after  { content: ']'; color: var(--accent); }
+    .legal h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em; line-height: 1.1;
+      margin-bottom: 12px;
+    }
+    .legal .meta {
+      font-family: var(--font-mono);
+      font-size: .72rem; letter-spacing: .14em;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 1px dashed var(--line-2);
+    }
+    .legal .meta span + span::before { content: '·'; margin: 0 10px; color: var(--text-dim); }
+
+    .legal .draft-banner {
+      position: relative;
+      margin: 0 0 40px;
+      padding: 18px 22px 18px 46px;
+      background: rgba(244, 128, 3, 0.08);
+      border: 1px solid rgba(244, 128, 3, 0.3);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: .82rem;
+      line-height: 1.6;
+      color: var(--text-soft);
+    }
+    .legal .draft-banner::before {
+      content: '⚠'; position: absolute; left: 16px; top: 16px;
+      font-size: 1rem; color: var(--accent);
+    }
+    .legal .draft-banner strong { color: var(--accent); font-weight: 700; }
+
+    .legal h2 {
+      font-family: var(--font-display);
+      font-size: 1.5rem; font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-top: 48px; margin-bottom: 14px;
+      color: var(--text);
+      display: flex; align-items: baseline; gap: 12px;
+    }
+    .legal h2::before {
+      content: attr(data-n);
+      font-family: var(--font-mono);
+      font-size: .78rem; font-weight: 500;
+      color: var(--accent);
+      letter-spacing: 0.14em;
+      min-width: 42px;
+    }
+    .legal p, .legal li {
+      font-size: 1rem; line-height: 1.75;
+      color: var(--text-soft);
+      margin-bottom: 14px;
+    }
+    .legal ul { padding-left: 20px; margin-bottom: 14px; }
+    .legal li::marker { color: var(--accent); }
+    .legal a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+    .legal a:hover { color: var(--accent-2); }
+    .legal strong { color: var(--text); font-weight: 600; }
+    .legal .tbd {
+      display: inline-block;
+      padding: 1px 8px;
+      background: rgba(244, 128, 3, 0.12);
+      border: 1px solid rgba(244, 128, 3, 0.35);
+      border-radius: 2px;
+      font-family: var(--font-mono);
+      font-size: .82rem;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+
+    .legal .end {
+      margin-top: 64px;
+      padding-top: 24px;
+      border-top: 1px dashed var(--line-2);
+      font-family: var(--font-mono);
+      font-size: .72rem;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .legal .end a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body class="has-noise">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <nav class="legal-nav">
+    <div class="inner">
+      <a class="brand" href="index.html"><img src="assets/logo.png" alt="ENE"> <span>ENE / Legal</span></a>
+      <a class="back" href="index.html">← Home</a>
+    </div>
+  </nav>
+
+  <main class="legal" id="main" tabindex="-1">
+    <span class="kicker">Privacy Policy</span>
+    <h1>How we handle your data</h1>
+    <p class="meta">
+      <span>Last updated: <time>2026-04-22</time></span>
+      <span>Applies to: ENE learners &amp; visitors</span>
+    </p>
+
+    <div class="draft-banner">
+      <strong>Owner action required before launch.</strong>
+      This is a sensible default draft. Replace every <span class="tbd">highlighted</span> placeholder with real information, and have a lawyer in your jurisdiction review before accepting payments. ENE is not legal counsel.
+    </div>
+
+    <h2 data-n="01">Who we are</h2>
+    <p>ENE — Engineering New Era (&ldquo;ENE&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;) is operated by <span class="tbd">{{COMPANY_LEGAL_NAME}}</span>, registered in <span class="tbd">{{COUNTRY / STATE OF REGISTRATION}}</span>. You can reach us at <a href="mailto:hello@ene.app">hello@ene.app</a>.</p>
+    <p>This policy explains what personal information we collect when you use our learning platform at <span class="tbd">{{PRIMARY_DOMAIN}}</span>, why we collect it, how we store it, and what rights you have over it.</p>
+
+    <h2 data-n="02">What we collect</h2>
+    <p>We only collect the information we need to run the platform:</p>
+    <ul>
+      <li><strong>Account data</strong> — your name, email address, hashed password, and the courses you enrol in.</li>
+      <li><strong>Progress data</strong> — which lessons you&rsquo;ve started or completed, timestamps, and simple engagement stats (XP, streak, level).</li>
+      <li><strong>Payment data</strong> — card details are handled entirely by <a href="https://stripe.com/privacy" rel="noopener">Stripe</a>. We never see or store card numbers. We do store the last 4 digits, card brand, your billing country, and the Stripe subscription / customer IDs.</li>
+      <li><strong>Technical data</strong> — IP address (kept for rate limiting and abuse prevention), browser type, and basic request logs. These are rotated on a short schedule.</li>
+      <li><strong>Communications</strong> — if you email us for support, we keep a record of that thread to follow up.</li>
+    </ul>
+    <p>We do <strong>not</strong> collect: government IDs, health data, biometric data, or precise location. We do not sell your data to anyone, ever.</p>
+
+    <h2 data-n="03">Why we collect it</h2>
+    <ul>
+      <li>To authenticate you and keep your session secure.</li>
+      <li>To track your progress through courses and lessons.</li>
+      <li>To process your subscription payments through Stripe.</li>
+      <li>To send you account emails (verify email, reset password, receipts, important service updates).</li>
+      <li>To prevent abuse (rate limiting, account lock-out on repeated failed logins).</li>
+      <li>To improve the product — in aggregate, never tied to individuals.</li>
+    </ul>
+
+    <h2 data-n="04">How long we keep it</h2>
+    <p>We keep your account data for as long as your account is active, plus <strong>90 days</strong> after account closure to handle refund requests and dispute resolution. After that, your record is permanently deleted from our primary database. Backups roll off within <strong>35 days</strong>.</p>
+    <p>Stripe retains payment records for <span class="tbd">{{STRIPE_RETENTION_PERIOD}}</span> per its own policy and applicable tax law.</p>
+
+    <h2 data-n="05">Who we share it with</h2>
+    <p>A small number of trusted processors help us run the service. Each one has its own privacy practices, which we&rsquo;ve reviewed:</p>
+    <ul>
+      <li><strong>Stripe</strong> — payments &amp; subscriptions (<a href="https://stripe.com/privacy" rel="noopener">privacy policy</a>)</li>
+      <li><strong>MongoDB Atlas</strong> — encrypted database hosting</li>
+      <li><strong>Railway / Render / AWS</strong> (choose one) — application hosting <span class="tbd">{{HOSTING_PROVIDER}}</span></li>
+      <li><strong>SendGrid / Postmark / Resend</strong> (choose one) — transactional email <span class="tbd">{{EMAIL_PROVIDER}}</span></li>
+      <li><strong>Cloudflare</strong> — CDN, DNS, bot protection (if enabled)</li>
+    </ul>
+    <p>We never share your data with advertisers. We do not use third-party advertising cookies.</p>
+
+    <h2 data-n="06">Your rights</h2>
+    <p>You can, at any time:</p>
+    <ul>
+      <li><strong>Access</strong> your data — email us at <a href="mailto:privacy@ene.app">privacy@ene.app</a> and we&rsquo;ll send you a machine-readable export.</li>
+      <li><strong>Correct</strong> your account information — most fields are editable from your dashboard; the rest we&rsquo;ll update on request.</li>
+      <li><strong>Delete</strong> your account and all associated data — email us and we&rsquo;ll confirm &amp; process within 14 days.</li>
+      <li><strong>Object</strong> or restrict how we use your data. Note that we may need some data to keep your account functional.</li>
+      <li><strong>Port</strong> your data to another service — included in the access export above.</li>
+    </ul>
+    <p>If you are in the EU, UK, or a jurisdiction with equivalent law, these rights are backed by GDPR / UK-GDPR. If you&rsquo;re in California, equivalent rights exist under CCPA / CPRA. You also have the right to complain to your national data protection authority.</p>
+
+    <h2 data-n="07">Cookies</h2>
+    <p>We use a minimal set of cookies:</p>
+    <ul>
+      <li><code>ene_at</code> / <code>ene_rt</code> — HttpOnly session cookies used to keep you signed in. Expire on logout.</li>
+      <li><code>ene_auth</code> — a UI hint cookie that says &ldquo;this browser is probably signed in&rdquo;. Non-sensitive, expires in 30 days.</li>
+      <li><strong>No third-party tracking cookies.</strong> If we add privacy-friendly analytics (such as Plausible or simple self-hosted counts), we will list it here and link to the provider&rsquo;s policy.</li>
+    </ul>
+
+    <h2 data-n="08">Security</h2>
+    <p>Your password is hashed with bcrypt. Our backend enforces a strict Content Security Policy, HSTS, CSRF protections, rate limiting, and NoSQL injection hardening. Access to production databases is restricted to a small group of engineers using time-limited credentials.</p>
+    <p>No system is unbreakable. If we ever learn of a security incident affecting your data, we will notify affected users by email within <strong>72 hours</strong> of confirmation, describe what happened, and explain what you should do.</p>
+
+    <h2 data-n="09">Children</h2>
+    <p>ENE is not directed to children under <strong>16</strong>. We do not knowingly collect personal data from children under 16. If you believe a child has created an account, please email <a href="mailto:privacy@ene.app">privacy@ene.app</a> and we will remove it.</p>
+
+    <h2 data-n="10">International transfers</h2>
+    <p>Your data may be stored on servers outside your country of residence (commonly the EU or the US, depending on the provider region we use). When we transfer data across borders, we rely on legally-approved mechanisms such as Standard Contractual Clauses.</p>
+
+    <h2 data-n="11">Changes to this policy</h2>
+    <p>If we materially change this policy, we&rsquo;ll email registered users and post a notice on the site at least <strong>14 days</strong> before the change takes effect. Continued use after the change means acceptance of the revised policy.</p>
+
+    <h2 data-n="12">Contact</h2>
+    <p>Questions or concerns? Email <a href="mailto:privacy@ene.app">privacy@ene.app</a>. We reply within 5 business days.</p>
+    <p>Postal: <span class="tbd">{{COMPANY_REGISTERED_ADDRESS}}</span>.</p>
+
+    <div class="end">
+      <span>ENE / Privacy · v1.0 · 2026-04-22</span>
+      <span><a href="terms.html">Terms of Service →</a></span>
+    </div>
+  </main>
+</body>
+</html>

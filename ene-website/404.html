@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="robots" content="noindex" />
+  <title>404 — ENE</title>
+  <meta name="description" content="The page you're looking for doesn't exist on ENE.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f48003'/%3E%3Ctext x='50%25' y='54%25' font-family='-apple-system,Inter,sans-serif' font-size='34' font-weight='800' text-anchor='middle' dominant-baseline='middle' fill='%230a0a14'%3EE%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/tokens.css?v=1">
+  <style>
+    body {
+      background-image:
+        radial-gradient(900px 500px at 85% -5%, rgba(244, 128, 3, 0.10), transparent 60%),
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px),
+        linear-gradient(180deg, var(--bg-0), var(--bg-1));
+      background-size: auto, 64px 64px, 64px 64px, auto;
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 32px 20px;
+      overflow-x: hidden;
+    }
+    .glow { position: fixed; pointer-events: none; filter: blur(60px); border-radius: 50%; z-index: 0; }
+    .g1 { width: 560px; height: 560px; background: radial-gradient(circle, rgba(244,128,3,.08), transparent 60%); top: -160px; right: -120px; }
+    .g2 { width: 420px; height: 420px; background: radial-gradient(circle, rgba(50,80,200,.10), transparent 60%); bottom: -120px; left: -80px; }
+
+    main {
+      position: relative; z-index: 1;
+      max-width: 680px; width: 100%;
+      background: linear-gradient(180deg, var(--surface), var(--surface-2));
+      border: 1px solid var(--line-2);
+      border-radius: 6px;
+      padding: clamp(40px, 6vw, 72px) clamp(24px, 5vw, 56px);
+      text-align: center;
+      box-shadow: 0 30px 80px -30px rgba(0, 0, 0, .65);
+      animation: ene-lift 600ms var(--ease-standard) both;
+    }
+    main > span.br {
+      position: absolute;
+      width: 16px; height: 16px;
+      border: 2px solid var(--accent);
+      pointer-events: none;
+    }
+    .br-tl { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+    .br-tr { top: -1px; right: -1px; border-left: none; border-bottom: none; }
+    .br-bl { bottom: -1px; left: -1px; border-right: none; border-top: none; }
+    .br-br { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+    .strip {
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: var(--font-mono); font-size: .66rem;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--text-muted);
+      padding-bottom: 14px; margin-bottom: 36px;
+      border-bottom: 1px dashed var(--line-2);
+    }
+    .strip .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--error); margin-right: 8px; vertical-align: middle; box-shadow: 0 0 10px var(--error); }
+
+    .code {
+      font-family: var(--font-display);
+      font-size: clamp(5rem, 14vw, 9rem);
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 8px;
+      text-shadow: 0 12px 40px rgba(244, 128, 3, .22);
+    }
+    .label {
+      font-family: var(--font-mono); font-size: .72rem; font-weight: 600;
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 2.6vw, 2rem);
+      font-weight: 700; letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+    p { color: var(--text-muted); font-size: 1rem; line-height: 1.7; margin: 0 auto 36px; max-width: 440px; }
+
+    .cta-row { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+    a.btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 24px; border-radius: 4px;
+      font-family: var(--font-mono); font-weight: 700; font-size: .82rem;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      text-decoration: none;
+      transition: all .25s var(--ease-standard);
+    }
+    a.btn-primary { background: var(--accent); color: var(--text-ink); border: 1px solid var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 10px 28px -10px var(--accent-soft); }
+    a.btn-primary:hover { background: var(--accent-2); border-color: var(--accent-2); box-shadow: 0 0 0 1px var(--accent-2), 0 14px 32px -10px rgba(244,128,3,.5); transform: translateY(-1px); }
+    a.btn-ghost { background: transparent; color: var(--text-soft); border: 1px solid var(--line-2); }
+    a.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    .quicklinks {
+      margin-top: 40px; padding-top: 24px;
+      border-top: 1px dashed var(--line-2);
+      display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 20px;
+      font-family: var(--font-mono); font-size: .72rem; letter-spacing: 0.14em;
+    }
+    .quicklinks a { color: var(--text-muted); text-decoration: none; transition: color .2s; }
+    .quicklinks a:hover { color: var(--accent); }
+    .quicklinks a::before { content: '→ '; color: var(--accent); opacity: .6; }
+  </style>
+</head>
+<body>
+  <div class="glow g1"></div>
+  <div class="glow g2"></div>
+  <main>
+    <span class="br br-tl" aria-hidden="true"></span>
+    <span class="br br-tr" aria-hidden="true"></span>
+    <span class="br br-bl" aria-hidden="true"></span>
+    <span class="br br-br" aria-hidden="true"></span>
+
+    <div class="strip">
+      <span><span class="dot"></span>ENE / Error</span>
+      <span>HTTP 404</span>
+    </div>
+
+    <div class="code">404</div>
+    <div class="label">Signal lost</div>
+
+    <h1>That page doesn&rsquo;t exist.</h1>
+    <p>The link you followed is broken, the page was moved, or you typed the URL straight into the void. Either way — let&rsquo;s get you back on track.</p>
+
+    <div class="cta-row">
+      <a class="btn btn-primary" href="index.html">Back to home →</a>
+      <a class="btn btn-ghost" href="courses.html">Browse courses</a>
+    </div>
+
+    <div class="quicklinks">
+      <a href="index.html">Home</a>
+      <a href="courses.html">Courses</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="login.html">Sign in</a>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="color-scheme" content="dark" />
+  <title>Pricing — ENE</title>
+  <meta name="description" content="One simple subscription for every ENE course. Audit for free, unlock track with mentor access, or join a full cohort. Cancel anytime. 30-day money-back guarantee.">
+  <meta property="og:title" content="Pricing — ENE">
+  <meta property="og:description" content="Audit free. Track $49/mo. Cohort $299/mo. Cancel anytime.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/og-cover.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Pricing — ENE">
+  <meta name="twitter:description" content="Audit free. Track $49/mo. Cohort $299/mo.">
+  <meta name="twitter:image" content="assets/og-cover.png">
+  <meta name="theme-color" content="#f48003">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f48003'/%3E%3Ctext x='50%25' y='54%25' font-family='-apple-system,Inter,sans-serif' font-size='34' font-weight='800' text-anchor='middle' dominant-baseline='middle' fill='%230a0a14'%3EE%3C/text%3E%3C/svg%3E">
+  <script src="assets/config.js?v=1776533472"></script>
+  <script src="assets/sanitize.js?v=1776533472"></script>
+  <script src="assets/api.js?v=1776533472"></script>
+  <script src="assets/analytics.js?v=1" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg-0: #050514; --bg-1: #08081f;
+      --surface: #0e0e2c; --surface-2: #14143a;
+      --line: rgba(255,255,255,0.07);
+      --line-2: rgba(255,255,255,0.14);
+      --accent: #f48003; --accent-2: #ff9a2e;
+      --accent-soft: rgba(244,128,3,0.18);
+      --accent-glow: rgba(244,128,3,0.45);
+      --text: #f5f5fa;
+      --text-soft: rgba(245,245,250,0.72);
+      --text-muted: rgba(245,245,250,0.45);
+      --ok: #15c7bc; --ok-soft: rgba(21,199,188,0.18);
+      --gold: #f3c659;
+
+      --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+      --ease-pop:      cubic-bezier(0.18, 0.9, 0.3, 1.2);
+      --card-radius: 14px;
+    }
+    html { color-scheme: dark; scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: var(--bg-0);
+      background-image:
+        radial-gradient(1000px 600px at 88% -5%, rgba(244,128,3,0.12), transparent 60%),
+        radial-gradient(1000px 700px at -10% 110%, rgba(50,80,200,0.14), transparent 60%),
+        linear-gradient(180deg, var(--bg-0), var(--bg-1));
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2 { font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.022em; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; }
+
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 32px); }
+
+    /* Nav */
+    .nav {
+      position: sticky; top: 0; z-index: 30;
+      background: rgba(8,8,31,0.72);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-inner {
+      max-width: 1120px; margin: 0 auto;
+      padding: 14px clamp(16px, 4vw, 32px);
+      display: flex; align-items: center; gap: 18px;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+    }
+    .brand img { height: 22px; filter: drop-shadow(0 6px 14px var(--accent-glow)); }
+    .nav-spacer { flex: 1; }
+    .nav-link {
+      padding: 9px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--line-2);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      transition: all 180ms var(--ease-standard);
+    }
+    .nav-link:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* Hero */
+    .hero {
+      padding: 72px 0 20px;
+      text-align: center;
+    }
+    .eyebrow {
+      display: inline-flex;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(244,128,3,0.10);
+      border: 1px solid rgba(244,128,3,0.28);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.08;
+      margin-bottom: 14px;
+    }
+    h1 .accent { color: var(--accent); }
+    .lede {
+      font-size: 1.1rem;
+      color: var(--text-soft);
+      max-width: 620px;
+      margin: 0 auto 28px;
+    }
+
+    /* Billing toggle */
+    .billing-toggle {
+      display: inline-flex;
+      padding: 4px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line-2);
+      gap: 4px;
+    }
+    .billing-toggle button {
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      color: var(--text-soft);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 600;
+      transition: color 180ms var(--ease-standard), background-color 200ms var(--ease-standard);
+    }
+    .billing-toggle button.active {
+      background: var(--accent);
+      color: #0a0a14;
+    }
+    .billing-toggle .save-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      margin-left: 6px;
+      border-radius: 4px;
+      background: var(--ok-soft);
+      color: var(--ok);
+      font-size: 0.58rem;
+    }
+
+    /* Plans grid */
+    .plans {
+      padding: 32px 0 56px;
+    }
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .plan {
+      position: relative;
+      background: linear-gradient(180deg, rgba(14,14,44,0.75), rgba(20,20,58,0.6));
+      backdrop-filter: blur(18px) saturate(140%);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
+      border: 1px solid var(--line-2);
+      border-radius: var(--card-radius);
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: translate3d(0, 14px, 0);
+      animation: rise 520ms var(--delay, 0ms) var(--ease-standard) forwards;
+    }
+    @keyframes rise { to { opacity: 1; transform: translate3d(0, 0, 0); } }
+
+    .plan.popular {
+      border-color: rgba(244,128,3,0.45);
+      box-shadow: 0 30px 72px -30px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    .plan.popular::before {
+      content: "Most popular";
+      position: absolute;
+      top: -12px; left: 50%;
+      transform: translateX(-50%);
+      padding: 5px 14px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #0a0a14;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      box-shadow: 0 10px 24px -10px var(--accent-glow);
+    }
+
+    .plan .name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .plan .tagline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 22px;
+    }
+    .plan .price {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .plan.popular .price { color: var(--accent); }
+    .plan .price-unit {
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+
+    .plan .features {
+      list-style: none;
+      margin: 0 0 24px; padding: 0;
+      display: flex; flex-direction: column; gap: 10px;
+      flex: 1;
+    }
+    .plan .features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      color: var(--text-soft);
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+    .plan .tick {
+      width: 18px; height: 18px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: var(--ok-soft);
+      color: var(--ok);
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-top: 2px;
+    }
+    .plan .tick svg {
+      width: 11px; height: 11px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 3;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    .plan .cta {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 8px;
+      padding: 14px 18px;
+      border-radius: 10px;
+      border: 1px solid var(--line-2);
+      background: transparent;
+      color: var(--text);
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      transition:
+        background-color 200ms var(--ease-standard),
+        border-color 200ms var(--ease-standard),
+        transform 180ms var(--ease-standard),
+        box-shadow 220ms var(--ease-standard);
+    }
+    .plan .cta:hover:not(:disabled) {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translate3d(0, -1px, 0);
+    }
+    .plan.popular .cta {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0a0a14;
+      box-shadow: 0 10px 30px -12px var(--accent-soft);
+    }
+    .plan.popular .cta:hover:not(:disabled) {
+      background: var(--accent-2);
+      border-color: var(--accent-2);
+      color: #0a0a14;
+      transform: translate3d(0, -2px, 0);
+      box-shadow: 0 18px 44px -14px rgba(244,128,3,0.55);
+    }
+    .plan .cta:disabled { opacity: 0.55; cursor: not-allowed; }
+    .plan .current-badge {
+      display: inline-block;
+      margin-top: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.64rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ok);
+    }
+
+    /* FAQ / footer */
+    .footer-note {
+      text-align: center;
+      padding: 24px 0 56px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+    }
+    .footer-note strong { color: var(--ok); }
+
+    @media (max-width: 520px) {
+      .hero { padding: 40px 0 8px; }
+      .plan { padding: 26px 22px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+      }
+      .plan { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <style>.skip-link{position:absolute;left:-9999px;top:8px;z-index:99999;background:#f48003;color:#0a0a14;padding:10px 18px;border-radius:8px;font-family:system-ui,sans-serif;font-weight:700;font-size:.8rem;text-decoration:none}.skip-link:focus{left:12px}</style>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="index.html">
+        <img src="assets/logo.png" alt="ENE">
+        <span>ENE</span>
+      </a>
+      <span class="nav-spacer"></span>
+      <a class="nav-link" id="navAccount" href="login.html">Sign in</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <span class="eyebrow">Plans &amp; Pricing</span>
+      <h1>Learn at the pace <span class="accent">your career</span> demands</h1>
+      <p class="lede">One simple subscription. Every course, every update, every mentor session. Cancel anytime, 30-day money-back guarantee.</p>
+      <div class="billing-toggle" role="tablist" aria-label="Billing interval">
+        <button type="button" role="tab" aria-selected="true"  data-interval="month" class="active">Monthly</button>
+        <button type="button" role="tab" aria-selected="false" data-interval="year">Yearly <span class="save-pill">Save 30%</span></button>
+      </div>
+    </div>
+  </header>
+
+  <section class="plans" id="main-content" tabindex="-1">
+    <div class="container">
+      <div class="plans-grid" id="plansGrid" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <p class="footer-note">
+    <strong>30-day money-back guarantee</strong> · Cancel anytime · Secured by Stripe
+  </p>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // Analytics layer (same interface as other pages).
+      const analytics = {
+        track(event, props = {}) {
+          try {
+            window.dispatchEvent(new CustomEvent('ene:analytics', { detail: Object.assign({ event, ts: Date.now() }, props) }));
+            if (typeof window.gtag === 'function') window.gtag('event', event, props);
+            if (Array.isArray(window.dataLayer)) window.dataLayer.push(Object.assign({ event }, props));
+          } catch (_) {}
+        }
+      };
+      window.eneAnalytics = analytics;
+
+      const grid = document.getElementById('plansGrid');
+      const navAccount = document.getElementById('navAccount');
+
+      let plans = [];
+      let interval = 'month';
+      let currentPlan = 'free';
+
+      function money(cents, iv) {
+        const per = iv === 'year' ? (cents / 12) : cents;
+        return '$' + (per / 100).toFixed(0);
+      }
+
+      function render() {
+        grid.innerHTML = '';
+        plans.forEach((p, i) => {
+          const cents = interval === 'year' ? p.priceYearlyCents : p.priceMonthlyCents;
+          const priceText = cents > 0 ? money(cents, interval) : '$0';
+          const unit = p.id === 'free'
+            ? 'Forever free'
+            : (interval === 'year' ? 'per month · billed yearly' : 'per month · billed monthly');
+          const isCurrent = currentPlan === p.id;
+          const ctaLabel = isCurrent
+            ? 'Current plan'
+            : (p.id === 'free' ? 'Keep free tier' : 'Choose ' + p.name);
+          const canCheckout = !isCurrent && p.available && p.id !== 'free';
+
+          const card = document.createElement('div');
+          card.className = 'plan' + (p.popular ? ' popular' : '');
+          card.style.setProperty('--delay', (i * 80) + 'ms');
+
+          const name = document.createElement('div'); name.className = 'name'; name.textContent = p.name;
+          card.appendChild(name);
+
+          const tag = document.createElement('div'); tag.className = 'tagline'; tag.textContent = p.tagline || '';
+          card.appendChild(tag);
+
+          const price = document.createElement('div'); price.className = 'price'; price.textContent = priceText;
+          card.appendChild(price);
+
+          const pu = document.createElement('div'); pu.className = 'price-unit'; pu.textContent = unit;
+          card.appendChild(pu);
+
+          const features = document.createElement('ul'); features.className = 'features';
+          (p.features || []).forEach((f) => {
+            const li = document.createElement('li');
+            li.innerHTML = '<span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5 11-11"/></svg></span>';
+            const s = document.createElement('span'); s.textContent = f;
+            li.appendChild(s);
+            features.appendChild(li);
+          });
+          card.appendChild(features);
+
+          const cta = document.createElement('button');
+          cta.type = 'button';
+          cta.className = 'cta';
+          cta.textContent = ctaLabel;
+          cta.disabled = !canCheckout;
+          cta.dataset.plan = p.id;
+          cta.addEventListener('click', () => onChoose(p));
+          card.appendChild(cta);
+
+          if (isCurrent) {
+            const cur = document.createElement('span'); cur.className = 'current-badge'; cur.textContent = '✓ Your plan';
+            card.appendChild(cur);
+          }
+          grid.appendChild(card);
+        });
+      }
+
+      async function onChoose(plan) {
+        if (plan.id === 'free' || currentPlan === plan.id) return;
+        if (!api.isAuthed()) {
+          try { sessionStorage.setItem('ene.postLogin', 'pricing.html'); } catch (_) {}
+          window.location.href = 'login.html';
+          return;
+        }
+        analytics.track('subscription_started', { plan: plan.id, interval });
+        const { ok, body } = await api.post('/subscriptions/checkout-session', {
+          plan: plan.id, interval,
+        });
+        if (ok && body && body.data && body.data.url) {
+          window.location.href = body.data.url;
+        } else {
+          alert((body && body.message) || 'Could not start checkout.');
+        }
+      }
+
+      // Billing toggle
+      document.querySelectorAll('.billing-toggle button').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.billing-toggle button').forEach((b) => {
+            b.classList.remove('active');
+            b.setAttribute('aria-selected', 'false');
+          });
+          btn.classList.add('active');
+          btn.setAttribute('aria-selected', 'true');
+          interval = btn.dataset.interval;
+          analytics.track('pricing_interval_changed', { interval });
+          render();
+        });
+      });
+
+      // Load plans + current subscription in parallel.
+      (async function boot() {
+        analytics.track('pricing_view');
+        const [plansRes, meRes] = await Promise.all([
+          api.get('/subscriptions/plans').catch(() => null),
+          api.isAuthed() ? api.me().catch(() => null) : Promise.resolve(null),
+        ]);
+        plans = (plansRes && plansRes.body && plansRes.body.data) || [];
+        if (meRes && meRes.ok && meRes.body && meRes.body.data) {
+          const me = meRes.body.data;
+          currentPlan = (me.subscription && me.subscription.plan) || 'free';
+          navAccount.textContent = 'Dashboard';
+          navAccount.href = 'dashboard.html';
+        }
+        render();
+      })();
+    })();
+  </script>
+</body>
+</html>
